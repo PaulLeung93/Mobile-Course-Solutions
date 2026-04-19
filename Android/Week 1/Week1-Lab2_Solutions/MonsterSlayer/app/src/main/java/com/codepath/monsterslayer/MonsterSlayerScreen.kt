@@ -230,7 +230,7 @@ fun MonsterSlayerScreen() {
                 // ── Monster Image (Right) ──
                 Sprite(
                     anim = monsterAnim,
-                    modifier = Modifier.size(160.dp).scale(3.2f),
+                    modifier = Modifier.size(160.dp).scale(scaleX = -3.2f, scaleY = 3.2f),
                     onAnimComplete = {
                         if (isMonsterHurt) isMonsterHurt = false
                     }

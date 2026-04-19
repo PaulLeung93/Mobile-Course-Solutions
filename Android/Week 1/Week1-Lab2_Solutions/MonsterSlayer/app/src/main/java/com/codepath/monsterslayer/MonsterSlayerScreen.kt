@@ -138,16 +138,19 @@ fun MonsterSlayerScreen() {
 
     // ── Swipe detection helper ──
     fun handleSwipe(direction: String) {
-        val next = comboProgress + direction
-        comboProgress = if (next.size > secretCombo.size) {
-            next.takeLast(secretCombo.size)
+        if (monsterHp <= 0) return
+
+        val nextIndex = comboProgress.size
+        if (direction == secretCombo[nextIndex]) {
+            comboProgress = comboProgress + direction
+            if (comboProgress.size == secretCombo.size) {
+                monsterHp = 0
+                isHeroAttacking = true
+                isMonsterHurt = true
+                comboProgress = listOf()
+            }
         } else {
-            next
-        }
-        if (comboProgress == secretCombo && monsterHp > 0) {
-            monsterHp = 0
-            isHeroAttacking = true
-            isMonsterHurt = true
+            // Reset if wrong gesture
             comboProgress = listOf()
         }
     }
@@ -330,8 +333,7 @@ fun MonsterSlayerScreen() {
                             }
                         }
                         labels.forEachIndexed { index, arrow ->
-                            val filled = index < comboProgress.size &&
-                                    comboProgress[index] == secretCombo[index]
+                            val filled = index < comboProgress.size
                             Text(
                                 text = arrow,
                                 fontSize = 16.sp,

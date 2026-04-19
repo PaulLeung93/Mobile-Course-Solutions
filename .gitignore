@@ -1,0 +1,41 @@
+# ===========================================
+# Top-Level Private Repo .gitignore
+# Mobile Course — Instructor Reference
+# ===========================================
+# 
+# This private repo tracks SOLUTION code only.
+# Starter code repos (KotlinPrimerApp, Week1-Lab1, etc.)
+# each have their own public GitHub repos and are excluded here.
+#
+
+# ----- Nested starter code repos (each has its own public GitHub) -----
+# Add an entry here for each student-facing repo
+Android/Prework/KotlinPrimerApp/
+Android/Week 1/Week1-Lab1/
+Android/Week 1/Week1-Lab2/
+
+# ----- IDE / Editor -----
+.vscode/
+.idea/
+*.iml
+.claude/
+.gemini/
+
+# ----- OS files -----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ----- Android build artifacts -----
+**/build/
+**/.gradle/
+**/local.properties
+**/.cxx/
+**/.externalNativeBuild/
+**/captures/
+**/*.hprof
+
+# ----- iOS build artifacts -----
+**/DerivedData/
+**/*.xcworkspace
+**/Pods/

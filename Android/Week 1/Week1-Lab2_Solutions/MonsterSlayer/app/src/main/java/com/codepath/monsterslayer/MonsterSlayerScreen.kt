@@ -1,6 +1,7 @@
 package com.codepath.monsterslayer
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -119,6 +121,13 @@ fun MonsterSlayerScreen() {
         label = "hpProgress"
     )
 
+    // ── Hero Attack Offset ──
+    val heroOffsetX by animateDpAsState(
+        targetValue = if (isHeroAttacking) 90.dp else 0.dp,
+        animationSpec = tween(150),
+        label = "heroOffsetX"
+    )
+
     // ── Swipe detection helper ──
     fun handleSwipe(direction: String) {
         val next = comboProgress + direction
@@ -162,6 +171,7 @@ fun MonsterSlayerScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // ── Top Bar (HP and Taunt) ──
+            Spacer(modifier = Modifier.height(24.dp))
             Column(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -203,7 +213,10 @@ fun MonsterSlayerScreen() {
                 // ── Hero Image (Left) ──
                 Sprite(
                     anim = heroAnim,
-                    modifier = Modifier.size(160.dp).scale(2.2f),
+                    modifier = Modifier
+                        .offset(x = heroOffsetX)
+                        .size(160.dp)
+                        .scale(3.2f),
                     onAnimComplete = {
                         if (isHeroAttacking) isHeroAttacking = false
                     }
@@ -212,7 +225,7 @@ fun MonsterSlayerScreen() {
                 // ── Monster Image (Right) ──
                 Sprite(
                     anim = phase.anim,
-                    modifier = Modifier.size(160.dp).scale(2.2f)
+                    modifier = Modifier.size(160.dp).scale(3.2f)
                 )
             }
 

@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.draw.scale
 import androidx.compose.foundation.Canvas
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.delay
@@ -156,29 +157,11 @@ fun MonsterSlayerScreen() {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp),
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ── Monster Image ──
-            Sprite(
-                anim = phase.anim,
-                modifier = Modifier.size(160.dp).scale(2.2f)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // ── Taunt ──
-            Text(
-                text = "\"${phase.taunt}\"",
-                fontSize = 14.sp,
-                fontStyle = FontStyle.Italic,
-                color = Color.White.copy(alpha = 0.7f)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // ── HP bar ──
+            // ── Top Bar (HP and Taunt) ──
             Column(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -199,119 +182,144 @@ fun MonsterSlayerScreen() {
                     color = hpBarColor,
                     trackColor = Color.White.copy(alpha = 0.15f)
                 )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // ── Attack count ──
-            Text(
-                text = "Attacks landed: $attackCount",
-                fontSize = 13.sp,
-                color = Color.Gray
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // ── Attack button ──
-            Button(
-                onClick = {
-                    if (monsterHp > 0) {
-                        monsterHp -= 1
-                        attackCount += 1
-                        isHeroAttacking = true
-                    }
-                },
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape),
-                enabled = monsterHp > 0,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Purple,
-                    disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
-                )
-            ) {
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = if (monsterHp > 0) "⚔️" else "💀",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "\"${phase.taunt}\"",
+                    fontSize = 14.sp,
+                    fontStyle = FontStyle.Italic,
+                    color = Color.White.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // ── Middle Section (Battle Scene) ──
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // ── Hero Image (Left) ──
+                Sprite(
+                    anim = heroAnim,
+                    modifier = Modifier.size(160.dp).scale(2.2f),
+                    onAnimComplete = {
+                        if (isHeroAttacking) isHeroAttacking = false
+                    }
+                )
 
-            // ── Attack label ──
-            Text(
-                text = if (monsterHp > 0) "TAP TO ATTACK" else "VICTORY!",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = if (monsterHp > 0) PurpleLight else Color(0xFF4CAF50),
-                letterSpacing = 2.sp
-            )
+                // ── Monster Image (Right) ──
+                Sprite(
+                    anim = phase.anim,
+                    modifier = Modifier.size(160.dp).scale(2.2f)
+                )
+            }
 
-            // ── Reset button (only when defeated) ──
-            if (monsterHp == 0) {
-                Spacer(modifier = Modifier.height(24.dp))
-                OutlinedButton(
+            // ── Bottom Section (Controls) ──
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // ── Attack count ──
+                Text(
+                    text = "Attacks landed: $attackCount",
+                    fontSize = 13.sp,
+                    color = Color.Gray
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ── Attack button ──
+                Button(
                     onClick = {
-                        monsterHp = MAX_HP
-                        attackCount = 0
-                        comboProgress = listOf()
+                        if (monsterHp > 0) {
+                            monsterHp -= 1
+                            attackCount += 1
+                            isHeroAttacking = true
+                        }
                     },
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = PurpleLight
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape),
+                    enabled = monsterHp > 0,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Purple,
+                        disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
                     )
                 ) {
                     Text(
-                        text = "🐉 New Monster",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        text = if (monsterHp > 0) "⚔️" else "💀",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-            }
 
-            // ── Combo hint ──
-            Spacer(modifier = Modifier.height(24.dp))
-            if (monsterHp > 0) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    val labels = listOf("↑", "↑", "↓")
-                    labels.forEachIndexed { index, arrow ->
-                        val filled = index < comboProgress.size &&
-                                comboProgress[index] == COMBO[index]
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ── Attack label ──
+                Text(
+                    text = if (monsterHp > 0) "TAP TO ATTACK" else "VICTORY!",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (monsterHp > 0) PurpleLight else Color(0xFF4CAF50),
+                    letterSpacing = 2.sp
+                )
+
+                // ── Reset button (only when defeated) ──
+                if (monsterHp == 0) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    OutlinedButton(
+                        onClick = {
+                            monsterHp = MAX_HP
+                            attackCount = 0
+                            comboProgress = listOf()
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = PurpleLight
+                        )
+                    ) {
                         Text(
-                            text = arrow,
-                            fontSize = 16.sp,
-                            color = if (filled) PurpleLight else Color.White.copy(alpha = 0.2f),
-                            modifier = Modifier
-                                .background(
-                                    color = if (filled) PurpleLight.copy(alpha = 0.15f)
-                                    else Color.White.copy(alpha = 0.05f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                            text = "🐉 New Monster",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "secret combo",
-                    fontSize = 10.sp,
-                    color = Color.White.copy(alpha = 0.2f),
-                    letterSpacing = 1.sp
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            // ── Hero Image ──
-            Sprite(
-                anim = heroAnim,
-                modifier = Modifier.size(160.dp).scale(2.2f),
-                onAnimComplete = {
-                    if (isHeroAttacking) isHeroAttacking = false
+
+                // ── Combo hint ──
+                if (monsterHp > 0) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        val labels = listOf("↑", "↑", "↓")
+                        labels.forEachIndexed { index, arrow ->
+                            val filled = index < comboProgress.size &&
+                                    comboProgress[index] == COMBO[index]
+                            Text(
+                                text = arrow,
+                                fontSize = 16.sp,
+                                color = if (filled) PurpleLight else Color.White.copy(alpha = 0.2f),
+                                modifier = Modifier
+                                    .background(
+                                        color = if (filled) PurpleLight.copy(alpha = 0.15f)
+                                        else Color.White.copy(alpha = 0.05f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "secret combo",
+                        fontSize = 10.sp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        letterSpacing = 1.sp
+                    )
                 }
-            )
+            }
         }
     }
 }

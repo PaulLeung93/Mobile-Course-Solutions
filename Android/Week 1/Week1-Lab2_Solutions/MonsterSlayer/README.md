@@ -2,6 +2,9 @@
 
 An immersive 2D RPG battle experience built with **Jetpack Compose**. This project demonstrates advanced UI techniques, custom frame-by-frame animations using `Canvas`, and dynamic state-driven gameplay mechanics.
 
+![Monster Slayer Gameplay Demo](images/Monster_Slayer.gif)
+
+
 ## 🎮 Features
 
 ### ⚔️ Dynamic Combat System

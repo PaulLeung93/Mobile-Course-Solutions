@@ -86,7 +86,10 @@ fun getMonsterTaunt(hp: Int): String = when {
 private const val MAX_HP = 20
 
 // ── Swipe combo ──
-private val COMBO = listOf("up", "up", "down")
+fun generateRandomCombo(length: Int = 5): List<String> {
+    val ops = listOf("up", "down", "left", "right")
+    return List(length) { ops.random() }
+}
 
 @Composable
 fun MonsterSlayerScreen() {
@@ -94,6 +97,7 @@ fun MonsterSlayerScreen() {
     var monsterHp by remember { mutableIntStateOf(MAX_HP) }
     var attackCount by remember { mutableIntStateOf(0) }
     var comboProgress by remember { mutableStateOf(listOf<String>()) }
+    var secretCombo by remember { mutableStateOf(generateRandomCombo(5)) }
     var isHeroAttacking by remember { mutableStateOf(false) }
     var isMonsterHurt by remember { mutableStateOf(false) }
 
@@ -135,12 +139,12 @@ fun MonsterSlayerScreen() {
     // ── Swipe detection helper ──
     fun handleSwipe(direction: String) {
         val next = comboProgress + direction
-        comboProgress = if (next.size > COMBO.size) {
-            next.takeLast(COMBO.size)
+        comboProgress = if (next.size > secretCombo.size) {
+            next.takeLast(secretCombo.size)
         } else {
             next
         }
-        if (comboProgress == COMBO && monsterHp > 0) {
+        if (comboProgress == secretCombo && monsterHp > 0) {
             monsterHp = 0
             isHeroAttacking = true
             isMonsterHurt = true
@@ -296,13 +300,14 @@ fun MonsterSlayerScreen() {
                             monsterHp = MAX_HP
                             attackCount = 0
                             comboProgress = listOf()
+                            secretCombo = generateRandomCombo(5)
                         },
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = PurpleLight
                         )
                     ) {
                         Text(
-                            text = "🐉 New Monster",
+                            text = "🐉 Battle Again",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -315,10 +320,18 @@ fun MonsterSlayerScreen() {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        val labels = listOf("↑", "↑", "↓")
+                        val labels = secretCombo.map { 
+                            when (it) {
+                                "up" -> "↑"
+                                "down" -> "↓"
+                                "left" -> "←"
+                                "right" -> "→"
+                                else -> "?"
+                            }
+                        }
                         labels.forEachIndexed { index, arrow ->
                             val filled = index < comboProgress.size &&
-                                    comboProgress[index] == COMBO[index]
+                                    comboProgress[index] == secretCombo[index]
                             Text(
                                 text = arrow,
                                 fontSize = 16.sp,

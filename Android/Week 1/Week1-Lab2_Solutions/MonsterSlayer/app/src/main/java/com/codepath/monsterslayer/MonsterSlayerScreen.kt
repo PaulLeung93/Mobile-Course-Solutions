@@ -37,6 +37,13 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.FilterQuality
 import kotlin.math.abs
 
 // ── Colors ──
@@ -48,14 +55,14 @@ private val HpYellow = Color(0xFFFFC107)
 private val HpRed = Color(0xFFF44336)
 
 // ── Monster phase data ──
-data class MonsterPhase(val emoji: String, val taunt: String)
+data class MonsterPhase(val drawableId: Int, val taunt: String)
 
 fun getMonsterPhase(hp: Int): MonsterPhase = when {
-    hp > 14 -> MonsterPhase("🐉", "I will crush you, tiny human!")
-    hp > 9  -> MonsterPhase("😠", "You dare wound me?!")
-    hp > 4  -> MonsterPhase("😤", "N-not so fast...")
-    hp > 0  -> MonsterPhase("😰", "Please... have mercy...")
-    else    -> MonsterPhase("💀", "You... you beat me...")
+    hp > 14 -> MonsterPhase(R.drawable.monster_idle, "I will crush you, tiny human!")
+    hp > 9  -> MonsterPhase(R.drawable.monster_hurt, "You dare wound me?!")
+    hp > 4  -> MonsterPhase(R.drawable.monster_hurt, "N-not so fast...")
+    hp > 0  -> MonsterPhase(R.drawable.monster_hurt, "Please... have mercy...")
+    else    -> MonsterPhase(R.drawable.monster_death, "You... you beat me...")
 }
 
 // ── Maximum HP constant ──
@@ -134,10 +141,15 @@ fun MonsterSlayerScreen() {
                 .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ── Monster emoji ──
-            Text(
-                text = phase.emoji,
-                fontSize = 80.sp
+            // ── Monster Image ──
+            Image(
+                painter = BitmapPainter(
+                    image = ImageBitmap.imageResource(id = phase.drawableId),
+                    filterQuality = FilterQuality.None
+                ),
+                contentDescription = "Monster",
+                modifier = Modifier.size(260.dp),
+                contentScale = ContentScale.Fit
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -274,6 +286,20 @@ fun MonsterSlayerScreen() {
                     letterSpacing = 1.sp
                 )
             }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // ── Hero Image ──
+            Image(
+                painter = BitmapPainter(
+                    image = ImageBitmap.imageResource(id = R.drawable.hero_idle),
+                    filterQuality = FilterQuality.None
+                ),
+                contentDescription = "Hero",
+                modifier = Modifier.size(260.dp),
+                contentScale = ContentScale.Fit
+            )
         }
     }
 }
+

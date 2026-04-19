@@ -161,18 +161,24 @@ fun MonsterSlayerScreen() {
             .fillMaxSize()
             .background(DarkBg)
             .pointerInput(Unit) {
-                detectDragGestures { _, dragAmount ->
-                    val (dx, dy) = dragAmount
-                    if (abs(dx) > abs(dy)) {
-                        // Horizontal swipe
-                        if (dx > 30) handleSwipe("right")
-                        else if (dx < -30) handleSwipe("left")
-                    } else {
-                        // Vertical swipe
-                        if (dy > 30) handleSwipe("down")
-                        else if (dy < -30) handleSwipe("up")
+                var totalDrag = androidx.compose.ui.geometry.Offset.Zero
+                detectDragGestures(
+                    onDragStart = { totalDrag = androidx.compose.ui.geometry.Offset.Zero },
+                    onDragEnd = {
+                        val (dx, dy) = totalDrag
+                        val threshold = 100f
+                        if (kotlin.math.abs(dx) > kotlin.math.abs(dy)) {
+                            if (dx > threshold) handleSwipe("right")
+                            else if (dx < -threshold) handleSwipe("left")
+                        } else {
+                            if (dy > threshold) handleSwipe("down")
+                            else if (dy < -threshold) handleSwipe( "up")
+                        }
+                    },
+                    onDrag = { _, dragAmount ->
+                        totalDrag += dragAmount
                     }
-                }
+                )
             },
         contentAlignment = Alignment.Center
     ) {

@@ -1,0 +1,25 @@
+*.iml
+.gradle
+local.properties
+.idea/
+.DS_Store
+build/
+captures/
+.externalNativeBuild
+.cxx
+
+# Android Profiler
+*.hprof
+
+# NDK
+obj/
+
+# Keystore files
+*.jks
+*.keystore
+
+# UI Builder
+.navigation/
+
+# Testing
+*.pb

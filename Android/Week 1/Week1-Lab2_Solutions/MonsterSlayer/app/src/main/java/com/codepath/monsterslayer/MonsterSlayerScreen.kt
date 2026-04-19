@@ -67,21 +67,19 @@ private val HpRed = Color(0xFFF44336)
 data class SpriteAnim(val drawableId: Int, val frameCount: Int, val isLooping: Boolean)
 
 val AnimMonsterIdle = SpriteAnim(R.drawable.monster_idle_sheet, 6, true)
-val AnimMonsterHurt = SpriteAnim(R.drawable.monster_hurt_sheet, 4, true)
+val AnimMonsterHurt = SpriteAnim(R.drawable.monster_hurt_sheet, 4, false)
 val AnimMonsterDeath = SpriteAnim(R.drawable.monster_death_sheet, 10, false)
 
 val AnimHeroIdle = SpriteAnim(R.drawable.hero_idle_sheet, 6, true)
 val AnimHeroAttack = SpriteAnim(R.drawable.hero_attack_sheet, 8, false)
 
-// ── Monster phase data ──
-data class MonsterPhase(val anim: SpriteAnim, val taunt: String)
-
-fun getMonsterPhase(hp: Int): MonsterPhase = when {
-    hp > 14 -> MonsterPhase(AnimMonsterIdle, "I will crush you, tiny human!")
-    hp > 9  -> MonsterPhase(AnimMonsterHurt, "You dare wound me?!")
-    hp > 4  -> MonsterPhase(AnimMonsterHurt, "N-not so fast...")
-    hp > 0  -> MonsterPhase(AnimMonsterHurt, "Please... have mercy...")
-    else    -> MonsterPhase(AnimMonsterDeath, "You... you beat me...")
+// ── Monster taunt logic ──
+fun getMonsterTaunt(hp: Int): String = when {
+    hp > 14 -> "I will crush you, tiny human!"
+    hp > 9  -> "You dare wound me?!"
+    hp > 4  -> "N-not so fast..."
+    hp > 0  -> "Please... have mercy..."
+    else    -> "You... you beat me..."
 }
 
 // ── Maximum HP constant ──
@@ -97,10 +95,16 @@ fun MonsterSlayerScreen() {
     var attackCount by remember { mutableIntStateOf(0) }
     var comboProgress by remember { mutableStateOf(listOf<String>()) }
     var isHeroAttacking by remember { mutableStateOf(false) }
+    var isMonsterHurt by remember { mutableStateOf(false) }
 
     // ── Derived values ──
-    val phase = getMonsterPhase(monsterHp)
+    val taunt = getMonsterTaunt(monsterHp)
     val heroAnim = if (isHeroAttacking) AnimHeroAttack else AnimHeroIdle
+    val monsterAnim = when {
+        monsterHp == 0 -> AnimMonsterDeath
+        isMonsterHurt -> AnimMonsterHurt
+        else -> AnimMonsterIdle
+    }
     val hpFraction = monsterHp.toFloat() / MAX_HP
 
     // ── Animated HP bar color ──
@@ -139,6 +143,7 @@ fun MonsterSlayerScreen() {
         if (comboProgress == COMBO && monsterHp > 0) {
             monsterHp = 0
             isHeroAttacking = true
+            isMonsterHurt = true
             comboProgress = listOf()
         }
     }
@@ -171,7 +176,7 @@ fun MonsterSlayerScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // ── Top Bar (HP and Taunt) ──
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(100.dp))
             Column(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -194,7 +199,7 @@ fun MonsterSlayerScreen() {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "\"${phase.taunt}\"",
+                    text = "\"$taunt\"",
                     fontSize = 14.sp,
                     fontStyle = FontStyle.Italic,
                     color = Color.White.copy(alpha = 0.7f),
@@ -224,8 +229,11 @@ fun MonsterSlayerScreen() {
 
                 // ── Monster Image (Right) ──
                 Sprite(
-                    anim = phase.anim,
-                    modifier = Modifier.size(160.dp).scale(3.2f)
+                    anim = monsterAnim,
+                    modifier = Modifier.size(160.dp).scale(3.2f),
+                    onAnimComplete = {
+                        if (isMonsterHurt) isMonsterHurt = false
+                    }
                 )
             }
 
@@ -250,6 +258,7 @@ fun MonsterSlayerScreen() {
                             monsterHp -= 1
                             attackCount += 1
                             isHeroAttacking = true
+                            isMonsterHurt = true
                         }
                     },
                     modifier = Modifier

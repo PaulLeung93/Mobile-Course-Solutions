@@ -30,6 +30,10 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 
 // ── Asset caches ──────────────────────────────────────────────────────────────
 // Both caches are process-scoped so each asset is decoded / stat-checked once.
@@ -183,9 +187,11 @@ fun CharacterSprite(
 
     // Resolve weapon paths and attack-animation parameters from WeaponConfig
     val config          = weaponConfig(weapon)
-    val isCasting       = isAttacking && ability != null && characterClass != "Mage" && ability != "Juggernaut Charge"
-    val isJuggernaut    = isAttacking && ability == "Juggernaut Charge"
-    val isWeaponAttack  = isAttacking && !isCasting && !isJuggernaut
+    val isCasting        = isAttacking && ability != null && characterClass != "Mage" && ability != "Juggernaut Charge" && ability != "Shadowstep"
+    val isJuggernaut     = isAttacking && ability == "Juggernaut Charge"
+    val isShadowstep     = isAttacking && ability == "Shadowstep"
+    val isWeaponAttack   = isAttacking && !isCasting && !isJuggernaut && !isShadowstep
+    val isShadowstepping = isAttacking && ability == "Shadow Clones"
 
     val weaponFrontPath = if (isWeaponAttack) config.attackPath       else config.walkPath
     val weaponBehindPath= if (isWeaponAttack) config.attackBehindPath else config.walkBehindPath
@@ -216,7 +222,7 @@ fun CharacterSprite(
     val dashOffsetY = remember(isAttacking) { Animatable(0f) }
 
     LaunchedEffect(isAttacking) {
-        if (isJuggernaut) {
+        if (isJuggernaut || isShadowstep) {
             launch {
                 dashOffsetY.animateTo(300f, animationSpec = tween(400, easing = FastOutSlowInEasing))
                 dashOffsetY.snapTo(-300f)
@@ -239,6 +245,21 @@ fun CharacterSprite(
     }
 
     Box(modifier = modifier) {
+        // Shadow clone ghosts — rendered first so they sit behind the real character
+        if (isShadowstepping) {
+            val currentBodyFrame = minOf(currentFrame, bodyFrames - 1)
+            listOf(-44f to 0.20f, -22f to 0.36f).forEach { (xOff, alphaVal) ->
+                Box(modifier = Modifier.fillMaxSize().offset(x = xOff.dp).alpha(alphaVal)) {
+                    SpriteLayer(assetPath = bodyPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (assetExists(context, pantsPath)) SpriteLayer(assetPath = pantsPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (assetExists(context, feetPath))  SpriteLayer(assetPath = feetPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (assetExists(context, armsPath))  SpriteLayer(assetPath = armsPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (assetExists(context, headPath))  SpriteLayer(assetPath = headPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (assetExists(context, armorPath)) SpriteLayer(assetPath = armorPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                }
+            }
+        }
+
         Box(modifier = Modifier.fillMaxSize().offset(y = dashOffsetY.value.dp)) {
             // Behind-weapon layer renders first (beneath body)
             if (weaponBehindPath != null && assetExists(context, weaponBehindPath))
@@ -257,6 +278,27 @@ fun CharacterSprite(
 
             // Front weapon layer renders last (on top)
             if (assetExists(context, weaponFrontPath)) SpriteLayer(assetPath = weaponFrontPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
+        }
+
+        // Shadowstep shadow aura — dark teal vignette that fades in/out with the ability
+        if (isShadowstep) {
+            val envelope = when {
+                currentFrame < 2 -> currentFrame / 2f
+                currentFrame < 6 -> 1f
+                else             -> (8 - currentFrame) / 3f
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(
+                                Color(0f, 0.537f, 0.482f, (envelope * 0.25f).coerceIn(0f, 1f)),
+                                Color(0f, 0.12f,  0.11f,  (envelope * 0.75f).coerceIn(0f, 1f))
+                            )
+                        )
+                    )
+            )
         }
 
         // Ability overlay renders on very top, only during attacks

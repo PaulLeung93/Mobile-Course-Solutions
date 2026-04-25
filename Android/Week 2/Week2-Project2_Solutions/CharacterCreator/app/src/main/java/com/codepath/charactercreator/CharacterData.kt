@@ -59,7 +59,7 @@ val statDescriptions = mapOf(
 val weaponsByClass = mapOf(
     "Warrior" to listOf("Longsword", "Battle Axe", "Light Saber", "Halberd"),
     "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Elder Wand"),
-    "Rogue"   to listOf("Dagger", "Smoke Bomb", "Whip", "Poison Vial"),
+    "Rogue"   to listOf("Dagger", "Shuriken", "Whip", "Sickle"),
     "Ranger"  to listOf("Longbow", "Crossbow", "Boomerang", "Slingshot"),
 )
 
@@ -68,8 +68,8 @@ val weaponEmojis = mapOf(
     "Light Saber"   to "🗡️", "Halberd"       to "🔱",
     "Arcane Staff"  to "🪄", "Spell Tome"    to "📖",
     "Crystal Orb"   to "🔮", "Elder Wand"    to "🪵",
-    "Dagger"        to "🗡️", "Smoke Bomb"    to "💨",
-    "Whip"          to "➰", "Poison Vial"   to "🧪",
+    "Dagger"        to "🗡️", "Shuriken"      to "🌟",
+    "Whip"          to "➰", "Sickle"        to "🌙",
     "Longbow"       to "🏹", "Crossbow"      to "🎯",
     "Boomerang"     to "🪃", "Slingshot"     to "☄️",
 )
@@ -79,7 +79,7 @@ val weaponEmojis = mapOf(
 val abilitiesByClass = mapOf(
     "Warrior" to listOf("Juggernaut Charge", "Ground Smash", "Berserker Rage", "Iron Will"),
     "Mage"    to listOf("Fireball", "Frost Nova", "Arcane Surge", "Mana Shield"),
-    "Rogue"   to listOf("Shadowstep", "Backstab", "Vanish", "Poison Strike"),
+    "Rogue"   to listOf("Shadow Clones", "Shadowstep", "Vanish", "Poison Strike"),
     "Ranger"  to listOf("Eagle Eye", "Rain of Arrows", "Track Prey", "Nature's Call"),
 )
 
@@ -88,7 +88,7 @@ val abilityEmojis = mapOf(
     "Berserker Rage" to "😤", "Iron Will"      to "⚙️",
     "Fireball"       to "🔥", "Frost Nova"     to "❄️",
     "Arcane Surge"   to "⚡", "Mana Shield"    to "🌀",
-    "Shadowstep"     to "👤", "Backstab"       to "🗡️",
+    "Shadow Clones"  to "👥", "Shadowstep"     to "👤",
     "Vanish"         to "💨", "Poison Strike"  to "🧪",
     "Eagle Eye"      to "🦅", "Rain of Arrows" to "🏹",
     "Track Prey"     to "🐾", "Nature's Call"  to "🌿",
@@ -206,21 +206,14 @@ val weaponConfigs: Map<String, WeaponConfig> = mapOf(
         attackBehindPath = "sprites/weapons/halberd_attack_behind_sheet.png",
         attackCellSize   = 192,
     ),
-    "Smoke Bomb" to WeaponConfig(
-        walkPath         = "sprites/weapons/smoke_bomb_sheet.png",
-        attackPath       = "sprites/weapons/smoke_bomb_attack_sheet.png",
+    "Shuriken" to WeaponConfig(
+        walkPath         = "sprites/weapons/shuriken_sheet.png",
+        attackPath       = "sprites/weapons/shuriken_attack_sheet.png",
         attackRow        = 2,
         attackFrames     = 7,
         attackCellSize   = 192,
-        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
-    ),
-    "Poison Vial" to WeaponConfig(
-        walkPath         = "sprites/weapons/poison_vial_sheet.png",
-        attackPath       = "sprites/weapons/poison_vial_attack_sheet.png",
-        attackRow        = 2,
-        attackFrames     = 7,
-        attackCellSize   = 192,
-        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW,
+        bodyAttackFrames = SpriteFrames.SPELLCAST_FRAMES
     ),
     "Whip" to WeaponConfig(
         walkPath         = "sprites/weapons/whip_sheet.png",

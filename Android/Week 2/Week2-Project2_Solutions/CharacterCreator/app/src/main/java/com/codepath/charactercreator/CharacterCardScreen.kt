@@ -223,10 +223,9 @@ fun CharacterCardScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Button(
-                        onClick = { 
+                        onClick = {
                             activeAbility = null
-                            isAttacking = true 
-                            if (weapon == "Smoke Bomb") isHidden = true
+                            isAttacking = true
                         },
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(8.dp),
@@ -240,9 +239,10 @@ fun CharacterCardScreen(
                         )
                     }
                     Button(
-                        onClick = { 
+                        onClick = {
                             activeAbility = ability
-                            isAttacking = true 
+                            isAttacking = true
+                            if (ability == "Vanish") isHidden = true
                         },
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(8.dp),

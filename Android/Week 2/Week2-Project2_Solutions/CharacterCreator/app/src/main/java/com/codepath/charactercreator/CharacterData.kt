@@ -103,19 +103,21 @@ fun buildDescription(
 ): String = "A $stat-enhanced $characterClass, wielding a $weapon and mastering $ability."
 
 // ── Sprite animation data class ───────────────────────────────────────────────
-// Same structure as MonsterSlayer's SpriteAnim — horizontal sprite sheet, single row
+// Used by Sprite for single-row (non-LPC) sprite sheets.
 data class CharacterAnim(
     val drawableId: Int,
     val frameCount: Int,
     val isLooping: Boolean
 )
 
-// ── Sprite frame counts ───────────────────────────────────────────────────────
-// UPDATE these values once real sprite sheets are confirmed.
-// Add your sheets to res/drawable-nodpi/ with these exact filenames:
-//   warrior_idle_sheet.png, mage_idle_sheet.png, rogue_idle_sheet.png, ranger_idle_sheet.png
-//   warrior_attack_sheet.png, mage_attack_sheet.png, rogue_attack_sheet.png, ranger_attack_sheet.png
+// ── LPC sprite sheet constants ────────────────────────────────────────────────
+// Standard Universal LPC Spritesheet layout: 13 columns × 21 rows of 64×64 frames.
+// All layer PNGs (body, armor, weapon) share the same grid so they composite in sync.
 object SpriteFrames {
-    val idle   = mapOf("Warrior" to 6, "Mage" to 6, "Rogue" to 6, "Ranger" to 6)
-    val attack = mapOf("Warrior" to 8, "Mage" to 8, "Rogue" to 8, "Ranger" to 8)
+    const val TOTAL_COLUMNS = 13
+    const val TOTAL_ROWS    = 21
+    const val WALK_ROW      = 10  // walk south (facing viewer) — used for idle
+    const val WALK_FRAMES   = 9
+    const val SLASH_ROW     = 14  // slash south — used for attack
+    const val SLASH_FRAMES  = 6
 }

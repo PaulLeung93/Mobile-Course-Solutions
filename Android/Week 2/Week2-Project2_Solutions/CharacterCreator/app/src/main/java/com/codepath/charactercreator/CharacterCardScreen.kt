@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -100,11 +101,10 @@ fun CharacterCardScreen(
             ) {
                 CharacterSprite(
                     characterClass = characterClass,
+                    weapon = weapon,
                     isAttacking = isAttacking,
                     onAttackComplete = { isAttacking = false },
-                    modifier = Modifier
-                        .size(160.dp)
-                        .scale(3.5f)
+                    modifier = Modifier.size(160.dp)
                 )
             }
 

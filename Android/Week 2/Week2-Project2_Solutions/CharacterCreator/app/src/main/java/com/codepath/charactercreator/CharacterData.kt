@@ -58,7 +58,7 @@ val statDescriptions = mapOf(
 // Weapons are class-specific — WeaponScreen uses this map to build the correct list
 val weaponsByClass = mapOf(
     "Warrior" to listOf("Longsword", "Battle Axe", "Light Saber", "Halberd"),
-    "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Runic Dagger"),
+    "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Elder Wand"),
     "Rogue"   to listOf("Dagger", "Smoke Bomb", "Whip", "Poison Vial"),
     "Ranger"  to listOf("Longbow", "Crossbow", "Throwing Axes", "Hunter's Trap"),
 )
@@ -67,7 +67,7 @@ val weaponEmojis = mapOf(
     "Longsword"     to "🗡️", "Battle Axe"    to "🪓",
     "Light Saber"   to "🗡️", "Halberd"       to "🔱",
     "Arcane Staff"  to "🪄", "Spell Tome"    to "📖",
-    "Crystal Orb"   to "🔮", "Runic Dagger"  to "✨",
+    "Crystal Orb"   to "🔮", "Elder Wand"    to "🪵",
     "Dagger"        to "🗡️", "Smoke Bomb"    to "💨",
     "Whip"          to "➰", "Poison Vial"   to "🧪",
     "Longbow"       to "🏹", "Crossbow"      to "🎯",
@@ -141,6 +141,30 @@ val weaponConfigs: Map<String, WeaponConfig> = mapOf(
         walkPath         = "sprites/weapons/arcane_staff_sheet.png",
         walkBehindPath   = "sprites/weapons/arcane_staff_behind_sheet.png",
         attackBehindPath = "sprites/weapons/arcane_staff_behind_sheet.png",
+        attackRow        = SpriteFrames.WALK_ROW,
+        attackFrames     = SpriteFrames.SPELLCAST_FRAMES,
+        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+    ),
+    "Crystal Orb" to WeaponConfig(
+        walkPath         = "sprites/weapons/crystal_orb_sheet.png",
+        walkBehindPath   = "sprites/weapons/crystal_orb_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/crystal_orb_behind_sheet.png",
+        attackRow        = SpriteFrames.WALK_ROW,
+        attackFrames     = SpriteFrames.SPELLCAST_FRAMES,
+        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+    ),
+    "Spell Tome" to WeaponConfig(
+        walkPath         = "sprites/weapons/spell_tome_sheet.png",
+        attackPath       = "sprites/weapons/spell_tome_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 7,
+        attackCellSize   = 192,
+        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+    ),
+    "Elder Wand" to WeaponConfig(
+        walkPath         = "sprites/weapons/elder_wand_sheet.png",
+        walkBehindPath   = "sprites/weapons/elder_wand_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/elder_wand_behind_sheet.png",
         attackRow        = SpriteFrames.WALK_ROW,
         attackFrames     = SpriteFrames.SPELLCAST_FRAMES,
         bodyAttackRow    = SpriteFrames.SPELLCAST_ROW

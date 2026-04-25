@@ -60,7 +60,7 @@ val weaponsByClass = mapOf(
     "Warrior" to listOf("Longsword", "Battle Axe", "Light Saber", "Halberd"),
     "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Elder Wand"),
     "Rogue"   to listOf("Dagger", "Smoke Bomb", "Whip", "Poison Vial"),
-    "Ranger"  to listOf("Longbow", "Crossbow", "Throwing Axes", "Hunter's Trap"),
+    "Ranger"  to listOf("Longbow", "Crossbow", "Boomerang", "Slingshot"),
 )
 
 val weaponEmojis = mapOf(
@@ -71,7 +71,7 @@ val weaponEmojis = mapOf(
     "Dagger"        to "🗡️", "Smoke Bomb"    to "💨",
     "Whip"          to "➰", "Poison Vial"   to "🧪",
     "Longbow"       to "🏹", "Crossbow"      to "🎯",
-    "Throwing Axes" to "🪓", "Hunter's Trap" to "⛓️",
+    "Boomerang"     to "🪃", "Slingshot"     to "☄️",
 )
 
 // ── Ability data ──────────────────────────────────────────────────────────────
@@ -231,6 +231,40 @@ val weaponConfigs: Map<String, WeaponConfig> = mapOf(
         attackBehindPath = "sprites/weapons/whip_attack_behind_sheet.png",
         attackCellSize   = 192
     ),
+    "Longbow" to WeaponConfig(
+        walkPath         = "sprites/weapons/longbow_sheet.png",
+        walkBehindPath   = "sprites/weapons/longbow_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/longbow_behind_sheet.png",
+        attackRow        = SpriteFrames.SHOOT_ROW,
+        attackFrames     = SpriteFrames.SHOOT_FRAMES,
+        bodyAttackRow    = SpriteFrames.SHOOT_ROW,
+        bodyAttackFrames = SpriteFrames.SHOOT_FRAMES
+    ),
+    "Crossbow" to WeaponConfig(
+        walkPath         = "sprites/weapons/crossbow_sheet.png",
+        walkBehindPath   = "sprites/weapons/crossbow_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/crossbow_behind_sheet.png",
+        attackRow        = SpriteFrames.THRUST_ROW,
+        attackFrames     = SpriteFrames.THRUST_FRAMES,
+        bodyAttackRow    = SpriteFrames.THRUST_ROW,
+        bodyAttackFrames = SpriteFrames.THRUST_FRAMES
+    ),
+    "Slingshot" to WeaponConfig(
+        walkPath         = "sprites/weapons/slingshot_sheet.png",
+        walkBehindPath   = "sprites/weapons/slingshot_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/slingshot_behind_sheet.png",
+        attackRow        = SpriteFrames.SHOOT_ROW,
+        attackFrames     = SpriteFrames.SHOOT_FRAMES,
+        bodyAttackRow    = SpriteFrames.SHOOT_ROW,
+        bodyAttackFrames = SpriteFrames.SHOOT_FRAMES
+    ),
+    "Boomerang" to WeaponConfig(
+        walkPath         = "sprites/weapons/boomerang_sheet.png",
+        attackPath       = "sprites/weapons/boomerang_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 6,
+        attackCellSize   = 192
+    ),
 )
 
 // ── LPC sprite sheet constants ────────────────────────────────────────────────
@@ -245,4 +279,8 @@ object SpriteFrames {
     const val SLASH_FRAMES  = 6
     const val SPELLCAST_ROW = 2   // spellcast south — used for throws/magic
     const val SPELLCAST_FRAMES = 7
+    const val SHOOT_ROW     = 18  // shoot south — used for bows
+    const val SHOOT_FRAMES  = 13
+    const val THRUST_ROW    = 6   // thrust south — used for spears/crossbows
+    const val THRUST_FRAMES = 8
 }

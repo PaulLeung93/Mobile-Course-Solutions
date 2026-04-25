@@ -177,15 +177,18 @@ fun CharacterSprite(
 
     // Resolve weapon paths and attack-animation parameters from WeaponConfig
     val config          = weaponConfig(weapon)
-    val weaponFrontPath = if (isAttacking) config.attackPath       else config.walkPath
-    val weaponBehindPath= if (isAttacking) config.attackBehindPath else config.walkBehindPath
-    val weaponRow       = if (isAttacking) config.attackRow        else SpriteFrames.WALK_ROW
-    val weaponCellSize  = if (isAttacking) config.attackCellSize   else 64
+    val isCasting       = isAttacking && ability != null && characterClass != "Mage"
+    val isWeaponAttack  = isAttacking && !isCasting
+
+    val weaponFrontPath = if (isWeaponAttack) config.attackPath       else config.walkPath
+    val weaponBehindPath= if (isWeaponAttack) config.attackBehindPath else config.walkBehindPath
+    val weaponRow       = if (isWeaponAttack) config.attackRow        else if (isCasting) SpriteFrames.SPELLCAST_ROW else SpriteFrames.WALK_ROW
+    val weaponCellSize  = if (isWeaponAttack) config.attackCellSize   else 64
 
     // Body/armor layers use standard LPC rows; weapon may override its own row during attacks
-    val bodyRow       = if (isAttacking) (config.bodyAttackRow ?: SpriteFrames.SLASH_ROW) else SpriteFrames.WALK_ROW
-    val bodyFrames    = if (isAttacking) (config.bodyAttackFrames ?: SpriteFrames.SLASH_FRAMES) else SpriteFrames.WALK_FRAMES
-    val frameCount    = if (isAttacking) config.attackFrames        else SpriteFrames.WALK_FRAMES
+    val bodyRow       = if (isWeaponAttack) (config.bodyAttackRow ?: SpriteFrames.SLASH_ROW) else if (isCasting) SpriteFrames.SPELLCAST_ROW else SpriteFrames.WALK_ROW
+    val bodyFrames    = if (isWeaponAttack) (config.bodyAttackFrames ?: SpriteFrames.SLASH_FRAMES) else if (isCasting) SpriteFrames.SPELLCAST_FRAMES else SpriteFrames.WALK_FRAMES
+    val frameCount    = if (isWeaponAttack) config.attackFrames else if (isCasting) SpriteFrames.SPELLCAST_FRAMES else SpriteFrames.WALK_FRAMES
 
     // Emoji fallback if body sheet is missing
     if (!assetExists(context, bodyPath)) {
@@ -241,9 +244,10 @@ fun CharacterSprite(
 
         // Ability overlay renders on very top, only during attacks
         if (isAttacking && ability != null) {
-            val abilityPath = "sprites/abilities/${ability.lowercase().replace(" ", "_")}_sheet.png"
+            val abilityPath = "sprites/abilities/${ability.lowercase().replace(" ", "_").replace("'", "")}_sheet.png"
             if (assetExists(context, abilityPath)) {
-                SpriteLayer(assetPath = abilityPath, frame = currentFrame, rowIndex = bodyRow, cellSize = 192, modifier = Modifier.fillMaxSize())
+                val abilityFrame = minOf(currentFrame, 6)
+                SpriteLayer(assetPath = abilityPath, frame = abilityFrame, rowIndex = 2, cellSize = 192, modifier = Modifier.fillMaxSize())
             }
         }
     }

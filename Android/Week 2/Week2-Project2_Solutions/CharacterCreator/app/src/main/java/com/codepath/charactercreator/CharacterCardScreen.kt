@@ -70,6 +70,7 @@ fun CharacterCardScreen(
 
     val accentColor = classColors[characterClass] ?: PurpleAccent
     var isAttacking by remember { mutableStateOf(false) }
+    var activeAbility by remember { mutableStateOf<String?>(null) }
     var isHidden by remember { mutableStateOf(false) }
 
     LaunchedEffect(isHidden) {
@@ -113,7 +114,7 @@ fun CharacterCardScreen(
                 CharacterSprite(
                     characterClass = characterClass,
                     weapon = weapon,
-                    ability = ability,
+                    ability = activeAbility,
                     isAttacking = isAttacking,
                     isBodyHidden = isHidden,
                     onAttackComplete = { 
@@ -199,23 +200,62 @@ fun CharacterCardScreen(
             Spacer(Modifier.weight(1f))
 
             // Action buttons
-            Button(
-                onClick = { 
-                    isAttacking = true 
-                    if (weapon == "Smoke Bomb") isHidden = true
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = accentColor)
-            ) {
-                Text(
-                    text = "⚔️  ATTACK",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 2.sp
-                )
+            if (characterClass == "Mage") {
+                Button(
+                    onClick = { 
+                        activeAbility = ability
+                        isAttacking = true 
+                    },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+                ) {
+                    Text(
+                        text = "⚔️  ATTACK & CAST",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 2.sp
+                    )
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Button(
+                        onClick = { 
+                            activeAbility = null
+                            isAttacking = true 
+                            if (weapon == "Smoke Bomb") isHidden = true
+                        },
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+                    ) {
+                        Text(
+                            text = "⚔️  ATTACK",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 2.sp
+                        )
+                    }
+                    Button(
+                        onClick = { 
+                            activeAbility = ability
+                            isAttacking = true 
+                        },
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+                    ) {
+                        Text(
+                            text = "✨  ABILITY",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 2.sp
+                        )
+                    }
+                }
             }
 
             Spacer(Modifier.height(10.dp))

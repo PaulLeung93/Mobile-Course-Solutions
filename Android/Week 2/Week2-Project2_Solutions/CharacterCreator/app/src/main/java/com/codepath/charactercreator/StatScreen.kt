@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun StatScreen(
     characterClass: String,
+    weapon: String,
     onStatSelected: (String) -> Unit
 ) {
     var selectedStat by remember { mutableStateOf("") }
@@ -47,15 +48,15 @@ fun StatScreen(
             .padding(horizontal = 20.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        StepHeader(step = 2, total = 4, label = "CHOOSE YOUR STAT BOOST")
+        StepHeader(step = 3, total = 4, label = "CHOOSE YOUR STAT BOOST")
 
         Spacer(Modifier.height(12.dp))
 
-        // Context — shows the class chosen in the previous step
-        ContextChip(
-            label = characterClass,
-            emoji = classEmojis[characterClass] ?: ""
-        )
+        // Context — shows the class and weapon chosen in previous steps
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            ContextChip(label = characterClass, emoji = classEmojis[characterClass] ?: "")
+            ContextChip(label = weapon,         emoji = weaponEmojis[weapon] ?: "🗡️")
+        }
 
         Spacer(Modifier.height(24.dp))
 

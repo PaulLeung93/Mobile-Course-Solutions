@@ -57,7 +57,7 @@ val statDescriptions = mapOf(
 // ── Weapon data ───────────────────────────────────────────────────────────────
 // Weapons are class-specific — WeaponScreen uses this map to build the correct list
 val weaponsByClass = mapOf(
-    "Warrior" to listOf("Longsword", "Battle Axe", "War Hammer", "Tower Shield"),
+    "Warrior" to listOf("Longsword", "Battle Axe", "Light Saber", "Halberd"),
     "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Runic Dagger"),
     "Rogue"   to listOf("Twin Daggers", "Smoke Bomb", "Garrote Wire", "Poison Vial"),
     "Ranger"  to listOf("Longbow", "Crossbow", "Throwing Axes", "Hunter's Trap"),
@@ -65,7 +65,7 @@ val weaponsByClass = mapOf(
 
 val weaponEmojis = mapOf(
     "Longsword"     to "🗡️", "Battle Axe"    to "🪓",
-    "War Hammer"    to "🔨", "Tower Shield"  to "🛡️",
+    "Light Saber"   to "🗡️", "Halberd"       to "🔱",
     "Arcane Staff"  to "🪄", "Spell Tome"    to "📖",
     "Crystal Orb"   to "🔮", "Runic Dagger"  to "✨",
     "Twin Daggers"  to "🗡️", "Smoke Bomb"    to "💨",
@@ -103,11 +103,75 @@ fun buildDescription(
 ): String = "A $stat-enhanced $characterClass, wielding a $weapon and mastering $ability."
 
 // ── Sprite animation data class ───────────────────────────────────────────────
-// Used by Sprite for single-row (non-LPC) sprite sheets.
+// Used by Sprite for single-row (non-LPC) sprite sheets loaded from assets/.
+// assetPath is relative to the assets/ root, e.g. "sprites/monsters/dragon_sheet.png".
 data class CharacterAnim(
-    val drawableId: Int,
+    val assetPath: String,
     val frameCount: Int,
     val isLooping: Boolean
+)
+
+// ── Weapon config ─────────────────────────────────────────────────────────────
+// Most weapons are a single standard LPC sheet (13×21) — those use the defaults.
+// Weapons with a separate attack sheet or a behind-body layer override here.
+//
+// attackRow    – south-facing row within the attack sheet (0-indexed)
+// attackFrames – number of animation frames in that row
+data class WeaponConfig(
+    val walkPath: String,
+    val attackPath: String        = walkPath,
+    val attackRow: Int            = SpriteFrames.SLASH_ROW,
+    val attackFrames: Int         = SpriteFrames.SLASH_FRAMES,
+    val walkBehindPath: String?   = null,
+    val attackBehindPath: String? = null,
+    val attackCellSize: Int       = 64
+)
+
+private fun defaultWeaponPath(weapon: String) =
+    "sprites/weapons/${weapon.lowercase().replace(" ", "_").replace("'", "")}_sheet.png"
+
+/** Returns the [WeaponConfig] for [weapon], falling back to a single-sheet default. */
+fun weaponConfig(weapon: String): WeaponConfig =
+    weaponConfigs[weapon] ?: WeaponConfig(walkPath = defaultWeaponPath(weapon))
+
+val weaponConfigs: Map<String, WeaponConfig> = mapOf(
+    "Battle Axe" to WeaponConfig(
+        walkPath         = "sprites/weapons/battle_axe_sheet.png",
+        attackPath       = "sprites/weapons/battle_axe_attack_sheet.png",
+        // South-facing slash = row 2 in the 4-row attack_slash sheet (192x192 cells)
+        attackRow        = 2,
+        attackFrames     = 6,
+        walkBehindPath   = "sprites/weapons/battle_axe_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/battle_axe_attack_behind_sheet.png",
+        attackCellSize   = 192,
+    ),
+    "Longsword" to WeaponConfig(
+        walkPath         = "sprites/weapons/longsword_sheet.png",
+        attackPath       = "sprites/weapons/longsword_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 6,
+        walkBehindPath   = "sprites/weapons/longsword_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/longsword_attack_behind_sheet.png",
+        attackCellSize   = 192,
+    ),
+    "Light Saber" to WeaponConfig(
+        walkPath         = "sprites/weapons/lightsaber_sheet.png",
+        attackPath       = "sprites/weapons/lightsaber_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 6,
+        walkBehindPath   = "sprites/weapons/lightsaber_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/lightsaber_attack_behind_sheet.png",
+        attackCellSize   = 192,
+    ),
+    "Halberd" to WeaponConfig(
+        walkPath         = "sprites/weapons/halberd_sheet.png",
+        attackPath       = "sprites/weapons/halberd_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 6,
+        walkBehindPath   = "sprites/weapons/halberd_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/halberd_attack_behind_sheet.png",
+        attackCellSize   = 192,
+    ),
 )
 
 // ── LPC sprite sheet constants ────────────────────────────────────────────────

@@ -1,5 +1,6 @@
 package com.codepath.charactercreator
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,53 +17,82 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
+// ── Asset caches ──────────────────────────────────────────────────────────────
+// Both caches are process-scoped so each asset is decoded / stat-checked once.
+private val spriteCache      = mutableMapOf<String, ImageBitmap?>()
+private val assetExistsCache = mutableMapOf<String, Boolean>()
+
+/** Decode a PNG from assets/sprites/… into an [ImageBitmap], or null if missing. */
+private fun loadSpriteAsset(context: android.content.Context, path: String): ImageBitmap? =
+    spriteCache.getOrPut(path) {
+        try {
+            context.assets.open(path).use { stream ->
+                BitmapFactory.decodeStream(stream)?.asImageBitmap()
+            }
+        } catch (e: Exception) { null }
+    }
+
+/** Returns true if [path] exists in assets/; result is cached after the first check. */
+private fun assetExists(context: android.content.Context, path: String): Boolean =
+    assetExistsCache.getOrPut(path) {
+        try { context.assets.open(path).close(); true } catch (e: Exception) { false }
+    }
+
 // ── SpriteLayer ───────────────────────────────────────────────────────────────
-// Stateless: renders one frame from a standard LPC sprite sheet.
-// The caller owns the frame counter so multiple layers share one animation tick.
+// Stateless: renders one frame from a standard LPC sprite sheet loaded from assets.
+// The caller owns the frame counter so multiple layers animate in perfect sync.
+//
+// Asset path format: "sprites/{folder}/{name}_sheet.png"
 @Composable
 fun SpriteLayer(
-    drawableId: Int,
+    assetPath: String,
     frame: Int,
     rowIndex: Int,
+    cellSize: Int = 64,
     modifier: Modifier = Modifier
 ) {
-    val imageBitmap = ImageBitmap.imageResource(id = drawableId)
+    val context     = LocalContext.current
+    val imageBitmap = remember(assetPath) { loadSpriteAsset(context, assetPath) } ?: return
+
     Canvas(modifier = modifier) {
-        val frameW = 64 // LPC standard: 64px wide, 64px tall per cell
-        val frameH = frameW
-        val srcY   = rowIndex * frameH
+        val srcY   = rowIndex * cellSize
 
-        // Safety: skip if row or column is out of bounds (e.g. 12-row weapon sheets at SLASH_ROW)
-        if (srcY + frameH > imageBitmap.height || frame * frameW >= imageBitmap.width) return@Canvas
+        // Safety: skip if row or column is out of bounds
+        if (srcY + cellSize > imageBitmap.height || frame * cellSize >= imageBitmap.width) return@Canvas
 
-        // All layers share a 64×128 logical space so the scale stays at 1.25 for a 160dp canvas
-        // (rather than 2.5 if we used a 64×64 space), keeping characters at a comfortable size.
-        // The 64px frame occupies the bottom half of that logical space (y=64..128), which
-        // centers the character head ~25% from the top of the canvas.
+        // All layers share a 64×128 logical space so scale stays at 1.25 for a 160 dp canvas,
+        // keeping characters at a comfortable size with the head visible above centre.
         val logicalW = 64f
         val logicalH = 128f
         val canvasW  = size.width
         val canvasH  = size.height
         val scale    = minOf(canvasW / logicalW, canvasH / logicalH)
 
-        val dstW = (frameW * scale).toInt()
-        val dstH = (frameH * scale).toInt()
-        val dstX = ((canvasW - logicalW * scale) / 2f).toInt()
-        // Anchor logical y=96 (center of the bottom 64px band) at canvasH/2:
-        val dstY = ((canvasH / 2f) - (96f * scale) + (logicalH - frameH) * scale).toInt()
+        val dstW = (cellSize * scale).toInt()
+        val dstH = (cellSize * scale).toInt()
+        
+        // Base coordinate for a standard 64x64 body cell
+        val baseDstX = (canvasW - logicalW * scale) / 2f
+        val baseDstY = (canvasH / 2f) - (96f * scale) + (logicalH - 64f) * scale
+        
+        // If the cell is larger (e.g. 192x192 attack slash), it needs to be centered 
+        // around the 64x64 body. Offset by half the difference.
+        val offset = (cellSize - 64) / 2f
+        val dstX = (baseDstX - offset * scale).toInt()
+        val dstY = (baseDstY - offset * scale).toInt()
 
         drawImage(
             image         = imageBitmap,
-            srcOffset     = IntOffset(frame * frameW, srcY),
-            srcSize       = IntSize(frameW, frameH),
+            srcOffset     = IntOffset(frame * cellSize, srcY),
+            srcSize       = IntSize(cellSize, cellSize),
             dstOffset     = IntOffset(dstX, dstY),
             dstSize       = IntSize(dstW, dstH),
             filterQuality = FilterQuality.None
@@ -72,6 +102,7 @@ fun SpriteLayer(
 
 // ── Sprite ────────────────────────────────────────────────────────────────────
 // Animated single-layer renderer for single-row (non-LPC) sprite sheets.
+// Used for standalone animations (e.g. monster sprites) loaded from assets.
 @Composable
 fun Sprite(
     anim: CharacterAnim,
@@ -97,7 +128,9 @@ fun Sprite(
         }
     }
 
-    val imageBitmap = ImageBitmap.imageResource(id = anim.drawableId)
+    val context     = LocalContext.current
+    val imageBitmap = remember(anim.assetPath) { loadSpriteAsset(context, anim.assetPath) } ?: return
+
     Canvas(modifier = modifier) {
         val frameWidth  = imageBitmap.width / anim.frameCount
         val frameHeight = imageBitmap.height
@@ -113,14 +146,15 @@ fun Sprite(
 }
 
 // ── CharacterSprite ───────────────────────────────────────────────────────────
-// Composites body + class armor + weapon layers from LPC sprite sheets.
+// Composites body + class layers + weapon from LPC sprite sheets stored in assets/.
 // All layers share one frame counter so they animate in perfect sync.
-// Falls back to an emoji placeholder if the body sheet is not yet in res/drawable-nodpi/.
+// Falls back to an emoji placeholder if the shared body sheet is missing.
 //
-// Expected drawables in res/drawable-nodpi/:
-//   body_sheet.png
-//   {class}_armor_sheet.png          e.g. warrior_armor_sheet.png
-//   {weapon_name}_sheet.png          e.g. longsword_sheet.png, battle_axe_sheet.png
+// Weapons with separate attack sheets or behind-body layers are declared in
+// CharacterData.weaponConfigs. All other weapons fall back to a single-sheet default.
+//
+// Render order (back to front):
+//   weapon_behind → body → pants → feet → arms → head → armor → weapon_front
 @Composable
 fun CharacterSprite(
     characterClass: String,
@@ -131,24 +165,31 @@ fun CharacterSprite(
 ) {
     val context = LocalContext.current
 
-    fun drawableId(name: String) =
-        context.resources.getIdentifier(name, "drawable", context.packageName)
+    val cls       = characterClass.lowercase()
+    val bodyPath  = "sprites/shared/body_sheet.png"
+    val headPath  = "sprites/shared/head_sheet.png"
+    val pantsPath = "sprites/$cls/pants_sheet.png"
+    val feetPath  = "sprites/$cls/feet_sheet.png"
+    val armsPath  = "sprites/$cls/arms_sheet.png"
+    val armorPath = "sprites/$cls/armor_sheet.png"
 
-    val cls      = characterClass.lowercase()
-    val bodyId   = drawableId("body_sheet")
-    val headId   = drawableId("head_sheet")
-    val pantsId  = drawableId("${cls}_pants_sheet")
-    val feetId   = drawableId("${cls}_feet_sheet")
-    val armsId   = drawableId("${cls}_arms_sheet")
-    val armorId  = drawableId("${cls}_armor_sheet")
-    val weaponId = drawableId(
-        weapon.lowercase().replace(" ", "_").replace("'", "") + "_sheet"
-    )
+    // Resolve weapon paths and attack-animation parameters from WeaponConfig
+    val config          = weaponConfig(weapon)
+    val weaponFrontPath = if (isAttacking) config.attackPath       else config.walkPath
+    val weaponBehindPath= if (isAttacking) config.attackBehindPath else config.walkBehindPath
+    val weaponRow       = if (isAttacking) config.attackRow        else SpriteFrames.WALK_ROW
+    val weaponCellSize  = if (isAttacking) config.attackCellSize   else 64
 
-    if (bodyId == 0) {
+    // Body/armor layers use standard LPC rows; weapon may override its own row during attacks
+    val bodyRow    = if (isAttacking) SpriteFrames.SLASH_ROW    else SpriteFrames.WALK_ROW
+    val frameCount = if (isAttacking) config.attackFrames        else SpriteFrames.WALK_FRAMES
+
+    // Emoji fallback if body sheet is missing
+    if (!assetExists(context, bodyPath)) {
         Box(
             modifier = modifier.background(
-                color = classColors[characterClass]?.copy(alpha = 0.25f) ?: PurpleAccent.copy(alpha = 0.25f),
+                color = classColors[characterClass]?.copy(alpha = 0.25f)
+                    ?: PurpleAccent.copy(alpha = 0.25f),
                 shape = RoundedCornerShape(12.dp)
             ),
             contentAlignment = Alignment.Center
@@ -157,9 +198,6 @@ fun CharacterSprite(
         }
         return
     }
-
-    val row        = if (isAttacking) SpriteFrames.SLASH_ROW    else SpriteFrames.WALK_ROW
-    val frameCount = if (isAttacking) SpriteFrames.SLASH_FRAMES else SpriteFrames.WALK_FRAMES
 
     var currentFrame by remember(isAttacking) { mutableIntStateOf(0) }
 
@@ -180,12 +218,18 @@ fun CharacterSprite(
     }
 
     Box(modifier = modifier) {
-        SpriteLayer(drawableId = bodyId,   frame = currentFrame, rowIndex = row, modifier = Modifier.fillMaxSize())
-        if (pantsId  != 0) SpriteLayer(drawableId = pantsId,  frame = currentFrame, rowIndex = row, modifier = Modifier.fillMaxSize())
-        if (feetId   != 0) SpriteLayer(drawableId = feetId,   frame = currentFrame, rowIndex = row, modifier = Modifier.fillMaxSize())
-        if (armsId   != 0) SpriteLayer(drawableId = armsId,   frame = currentFrame, rowIndex = row, modifier = Modifier.fillMaxSize())
-        if (headId   != 0) SpriteLayer(drawableId = headId,   frame = currentFrame, rowIndex = row, modifier = Modifier.fillMaxSize())
-        if (armorId  != 0) SpriteLayer(drawableId = armorId,  frame = currentFrame, rowIndex = row, modifier = Modifier.fillMaxSize())
-        if (weaponId != 0) SpriteLayer(drawableId = weaponId, frame = currentFrame, rowIndex = row, modifier = Modifier.fillMaxSize())
+        // Behind-weapon layer renders first (beneath body)
+        if (weaponBehindPath != null && assetExists(context, weaponBehindPath))
+            SpriteLayer(assetPath = weaponBehindPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
+
+        SpriteLayer(assetPath = bodyPath,  frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+        if (assetExists(context, pantsPath))  SpriteLayer(assetPath = pantsPath,  frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+        if (assetExists(context, feetPath))   SpriteLayer(assetPath = feetPath,   frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+        if (assetExists(context, armsPath))   SpriteLayer(assetPath = armsPath,   frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+        if (assetExists(context, headPath))   SpriteLayer(assetPath = headPath,   frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+        if (assetExists(context, armorPath))  SpriteLayer(assetPath = armorPath,  frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+
+        // Front weapon layer renders last (on top)
+        if (assetExists(context, weaponFrontPath)) SpriteLayer(assetPath = weaponFrontPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
     }
 }

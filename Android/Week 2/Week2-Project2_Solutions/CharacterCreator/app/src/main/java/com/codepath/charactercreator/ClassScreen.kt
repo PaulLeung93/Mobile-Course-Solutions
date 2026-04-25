@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -130,6 +132,7 @@ fun SelectionCard(
     accentColor: Color,
     isSelected: Boolean,
     modifier: Modifier = Modifier,
+    iconRes: Int? = null,
     onClick: () -> Unit
 ) {
     val borderColor = if (isSelected) accentColor else Color.White.copy(alpha = 0.1f)
@@ -153,7 +156,15 @@ fun SelectionCard(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(12.dp)
         ) {
-            Text(text = emoji, fontSize = 32.sp)
+            if (iconRes != null) {
+                Image(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = label,
+                    modifier = Modifier.size(40.dp).clip(RoundedCornerShape(4.dp))
+                )
+            } else {
+                Text(text = emoji, fontSize = 32.sp)
+            }
             Spacer(Modifier.height(8.dp))
             Text(
                 text = label,

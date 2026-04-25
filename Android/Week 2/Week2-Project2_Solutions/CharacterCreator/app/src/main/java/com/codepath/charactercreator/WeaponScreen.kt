@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 //
 // STARTER BUG 1 — hardcoded weapon list (line marked below):
 //   Replace the correct weaponsByClass[characterClass] lookup with a hardcoded
-//   listOf("Longsword", "Battle Axe", "War Hammer", "Tower Shield") so the
+//   listOf("Longsword", "Battle Axe", "Light Saber", "Halberd") so the
 //   weapon list always shows Warrior weapons regardless of the chosen class.
 //
 // STARTER BUG 2 — wrong argument order (in MainActivity.kt NavHost):
@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun WeaponScreen(
     characterClass: String,
-    stat: String,
     onWeaponSelected: (String) -> Unit
 ) {
     var selectedWeapon by remember { mutableStateOf("") }
@@ -60,14 +59,13 @@ fun WeaponScreen(
             .padding(horizontal = 20.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        StepHeader(step = 3, total = 4, label = "CHOOSE YOUR WEAPON")
+        StepHeader(step = 2, total = 4, label = "CHOOSE YOUR WEAPON")
 
         Spacer(Modifier.height(12.dp))
 
-        // Context chips — shows class and stat chosen in previous steps
+        // Context chips — shows class chosen in previous steps
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ContextChip(label = characterClass, emoji = classEmojis[characterClass] ?: "")
-            ContextChip(label = stat,           emoji = statEmojis[stat]           ?: "")
         }
 
         Spacer(Modifier.height(24.dp))
@@ -80,6 +78,8 @@ fun WeaponScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 rowItems.forEach { weapon ->
+                    val iconRes = if (weapon == "Light Saber") R.drawable.lightsaber_icon else null
+
                     SelectionCard(
                         emoji = weaponEmojis[weapon] ?: "🗡️",
                         label = weapon,
@@ -87,6 +87,7 @@ fun WeaponScreen(
                         accentColor = accentColor,
                         isSelected = selectedWeapon == weapon,
                         modifier = Modifier.weight(1f),
+                        iconRes = iconRes,
                         onClick = { selectedWeapon = weapon }
                     )
                 }

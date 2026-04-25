@@ -24,31 +24,31 @@ class MainActivity : ComponentActivity() {
                 composable("class") {
                     ClassScreen(
                         onClassSelected = { characterClass ->
-                            navController.navigate("stat/$characterClass")
+                            navController.navigate("weapon/$characterClass")
                         }
                     )
                 }
 
-                composable("stat/{characterClass}") { backStackEntry ->
+                composable("weapon/{characterClass}") { backStackEntry ->
                     val characterClass = backStackEntry.arguments?.getString("characterClass") ?: ""
-                    StatScreen(
-                        characterClass = characterClass,
-                        onStatSelected = { stat ->
-                            navController.navigate("weapon/$characterClass/$stat")
-                        }
-                    )
-                }
-
-                composable("weapon/{characterClass}/{stat}") { backStackEntry ->
-                    val characterClass = backStackEntry.arguments?.getString("characterClass") ?: ""
-                    val stat          = backStackEntry.arguments?.getString("stat")            ?: ""
                     WeaponScreen(
                         characterClass = characterClass,
-                        stat = stat,
+                        onWeaponSelected = { weapon ->
+                            navController.navigate("stat/$characterClass/$weapon")
+                        }
+                    )
+                }
+
+                composable("stat/{characterClass}/{weapon}") { backStackEntry ->
+                    val characterClass = backStackEntry.arguments?.getString("characterClass") ?: ""
+                    val weapon          = backStackEntry.arguments?.getString("weapon") ?: ""
+                    StatScreen(
+                        characterClass = characterClass,
+                        weapon = weapon,
                         // STARTER BUG 2 GOES HERE:
                         // Change navigate("ability/$characterClass/$stat/$weapon")
                         //      to navigate("ability/$characterClass/$weapon/$stat")  ← stat and weapon swapped
-                        onWeaponSelected = { weapon ->
+                        onStatSelected = { stat ->
                             navController.navigate("ability/$characterClass/$stat/$weapon")
                         }
                     )

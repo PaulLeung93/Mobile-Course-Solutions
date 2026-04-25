@@ -23,3 +23,6 @@ obj/
 
 # Testing
 *.pb
+
+# Agent Reference
+agent.md

@@ -77,14 +77,14 @@ val weaponEmojis = mapOf(
 // ── Ability data ──────────────────────────────────────────────────────────────
 // Abilities are also class-specific — each class has 4 unique abilities
 val abilitiesByClass = mapOf(
-    "Warrior" to listOf("Battle Cry", "Shield Bash", "Berserker Rage", "Iron Will"),
+    "Warrior" to listOf("Juggernaut Charge", "Ground Smash", "Berserker Rage", "Iron Will"),
     "Mage"    to listOf("Fireball", "Frost Nova", "Arcane Surge", "Mana Shield"),
     "Rogue"   to listOf("Shadowstep", "Backstab", "Vanish", "Poison Strike"),
     "Ranger"  to listOf("Eagle Eye", "Rain of Arrows", "Track Prey", "Nature's Call"),
 )
 
 val abilityEmojis = mapOf(
-    "Battle Cry"     to "📣", "Shield Bash"    to "🛡️",
+    "Juggernaut Charge" to "🦏", "Ground Smash"   to "💥",
     "Berserker Rage" to "😤", "Iron Will"      to "⚙️",
     "Fireball"       to "🔥", "Frost Nova"     to "❄️",
     "Arcane Surge"   to "⚡", "Mana Shield"    to "🌀",

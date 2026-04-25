@@ -24,6 +24,12 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.offset
 
 // ── Asset caches ──────────────────────────────────────────────────────────────
 // Both caches are process-scoped so each asset is decoded / stat-checked once.
@@ -177,8 +183,9 @@ fun CharacterSprite(
 
     // Resolve weapon paths and attack-animation parameters from WeaponConfig
     val config          = weaponConfig(weapon)
-    val isCasting       = isAttacking && ability != null && characterClass != "Mage"
-    val isWeaponAttack  = isAttacking && !isCasting
+    val isCasting       = isAttacking && ability != null && characterClass != "Mage" && ability != "Juggernaut Charge"
+    val isJuggernaut    = isAttacking && ability == "Juggernaut Charge"
+    val isWeaponAttack  = isAttacking && !isCasting && !isJuggernaut
 
     val weaponFrontPath = if (isWeaponAttack) config.attackPath       else config.walkPath
     val weaponBehindPath= if (isWeaponAttack) config.attackBehindPath else config.walkBehindPath
@@ -206,8 +213,16 @@ fun CharacterSprite(
     }
 
     var currentFrame by remember(isAttacking) { mutableIntStateOf(0) }
+    val dashOffsetY = remember(isAttacking) { Animatable(0f) }
 
     LaunchedEffect(isAttacking) {
+        if (isJuggernaut) {
+            launch {
+                dashOffsetY.animateTo(300f, animationSpec = tween(400, easing = FastOutSlowInEasing))
+                dashOffsetY.snapTo(-300f)
+                dashOffsetY.animateTo(0f, animationSpec = tween(400, easing = LinearOutSlowInEasing))
+            }
+        }
         while (true) {
             delay(100)
             if (currentFrame < frameCount - 1) {
@@ -224,23 +239,25 @@ fun CharacterSprite(
     }
 
     Box(modifier = modifier) {
-        // Behind-weapon layer renders first (beneath body)
-        if (weaponBehindPath != null && assetExists(context, weaponBehindPath))
-            SpriteLayer(assetPath = weaponBehindPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
+        Box(modifier = Modifier.fillMaxSize().offset(y = dashOffsetY.value.dp)) {
+            // Behind-weapon layer renders first (beneath body)
+            if (weaponBehindPath != null && assetExists(context, weaponBehindPath))
+                SpriteLayer(assetPath = weaponBehindPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
 
-        val currentBodyFrame = minOf(currentFrame, bodyFrames - 1)
+            val currentBodyFrame = minOf(currentFrame, bodyFrames - 1)
 
-        if (!isBodyHidden) {
-            SpriteLayer(assetPath = bodyPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, pantsPath))  SpriteLayer(assetPath = pantsPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, feetPath))   SpriteLayer(assetPath = feetPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, armsPath))   SpriteLayer(assetPath = armsPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, headPath))   SpriteLayer(assetPath = headPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, armorPath))  SpriteLayer(assetPath = armorPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            if (!isBodyHidden) {
+                SpriteLayer(assetPath = bodyPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (assetExists(context, pantsPath))  SpriteLayer(assetPath = pantsPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (assetExists(context, feetPath))   SpriteLayer(assetPath = feetPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (assetExists(context, armsPath))   SpriteLayer(assetPath = armsPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (assetExists(context, headPath))   SpriteLayer(assetPath = headPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (assetExists(context, armorPath))  SpriteLayer(assetPath = armorPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            }
+
+            // Front weapon layer renders last (on top)
+            if (assetExists(context, weaponFrontPath)) SpriteLayer(assetPath = weaponFrontPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
         }
-
-        // Front weapon layer renders last (on top)
-        if (assetExists(context, weaponFrontPath)) SpriteLayer(assetPath = weaponFrontPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
 
         // Ability overlay renders on very top, only during attacks
         if (isAttacking && ability != null) {

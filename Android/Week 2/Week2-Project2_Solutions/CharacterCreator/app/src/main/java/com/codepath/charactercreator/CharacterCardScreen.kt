@@ -113,6 +113,7 @@ fun CharacterCardScreen(
                 CharacterSprite(
                     characterClass = characterClass,
                     weapon = weapon,
+                    ability = ability,
                     isAttacking = isAttacking,
                     isBodyHidden = isHidden,
                     onAttackComplete = { 

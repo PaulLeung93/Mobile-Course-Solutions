@@ -159,6 +159,7 @@ fun Sprite(
 fun CharacterSprite(
     characterClass: String,
     weapon: String,
+    ability: String? = null,
     modifier: Modifier = Modifier,
     isAttacking: Boolean = false,
     isBodyHidden: Boolean = false,
@@ -237,5 +238,13 @@ fun CharacterSprite(
 
         // Front weapon layer renders last (on top)
         if (assetExists(context, weaponFrontPath)) SpriteLayer(assetPath = weaponFrontPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
+
+        // Ability overlay renders on very top, only during attacks
+        if (isAttacking && ability != null) {
+            val abilityPath = "sprites/abilities/${ability.lowercase().replace(" ", "_")}_sheet.png"
+            if (assetExists(context, abilityPath)) {
+                SpriteLayer(assetPath = abilityPath, frame = currentFrame, rowIndex = bodyRow, cellSize = 192, modifier = Modifier.fillMaxSize())
+            }
+        }
     }
 }

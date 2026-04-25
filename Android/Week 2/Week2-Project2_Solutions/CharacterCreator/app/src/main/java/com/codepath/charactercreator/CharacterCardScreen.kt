@@ -28,6 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.alpha
+import kotlinx.coroutines.delay
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
@@ -67,6 +70,14 @@ fun CharacterCardScreen(
 
     val accentColor = classColors[characterClass] ?: PurpleAccent
     var isAttacking by remember { mutableStateOf(false) }
+    var isHidden by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isHidden) {
+        if (isHidden) {
+            delay(2500)
+            isHidden = false
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -103,7 +114,10 @@ fun CharacterCardScreen(
                     characterClass = characterClass,
                     weapon = weapon,
                     isAttacking = isAttacking,
-                    onAttackComplete = { isAttacking = false },
+                    isBodyHidden = isHidden,
+                    onAttackComplete = { 
+                        isAttacking = false
+                    },
                     modifier = Modifier.size(160.dp)
                 )
             }
@@ -185,7 +199,10 @@ fun CharacterCardScreen(
 
             // Action buttons
             Button(
-                onClick = { isAttacking = true },
+                onClick = { 
+                    isAttacking = true 
+                    if (weapon == "Smoke Bomb") isHidden = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

@@ -124,7 +124,8 @@ data class WeaponConfig(
     val attackFrames: Int         = SpriteFrames.SLASH_FRAMES,
     val walkBehindPath: String?   = null,
     val attackBehindPath: String? = null,
-    val attackCellSize: Int       = 64
+    val attackCellSize: Int       = 64,
+    val bodyAttackRow: Int?       = null
 )
 
 private fun defaultWeaponPath(weapon: String) =
@@ -172,6 +173,14 @@ val weaponConfigs: Map<String, WeaponConfig> = mapOf(
         attackBehindPath = "sprites/weapons/halberd_attack_behind_sheet.png",
         attackCellSize   = 192,
     ),
+    "Smoke Bomb" to WeaponConfig(
+        walkPath         = "sprites/weapons/smoke_bomb_sheet.png",
+        attackPath       = "sprites/weapons/smoke_bomb_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 7,
+        attackCellSize   = 192,
+        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+    ),
 )
 
 // ── LPC sprite sheet constants ────────────────────────────────────────────────
@@ -184,4 +193,6 @@ object SpriteFrames {
     const val WALK_FRAMES   = 9
     const val SLASH_ROW     = 14  // slash south — used for attack
     const val SLASH_FRAMES  = 6
+    const val SPELLCAST_ROW = 2   // spellcast south — used for throws/magic
+    const val SPELLCAST_FRAMES = 7
 }

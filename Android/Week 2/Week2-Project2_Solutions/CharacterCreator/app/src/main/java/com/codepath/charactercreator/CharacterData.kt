@@ -137,6 +137,14 @@ fun weaponConfig(weapon: String): WeaponConfig =
     weaponConfigs[weapon] ?: WeaponConfig(walkPath = defaultWeaponPath(weapon))
 
 val weaponConfigs: Map<String, WeaponConfig> = mapOf(
+    "Arcane Staff" to WeaponConfig(
+        walkPath         = "sprites/weapons/arcane_staff_sheet.png",
+        walkBehindPath   = "sprites/weapons/arcane_staff_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/arcane_staff_behind_sheet.png",
+        attackRow        = SpriteFrames.WALK_ROW,
+        attackFrames     = SpriteFrames.SPELLCAST_FRAMES,
+        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+    ),
     "Battle Axe" to WeaponConfig(
         walkPath         = "sprites/weapons/battle_axe_sheet.png",
         attackPath       = "sprites/weapons/battle_axe_attack_sheet.png",

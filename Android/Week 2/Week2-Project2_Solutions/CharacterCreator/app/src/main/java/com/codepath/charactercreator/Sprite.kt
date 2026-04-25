@@ -182,8 +182,9 @@ fun CharacterSprite(
     val weaponCellSize  = if (isAttacking) config.attackCellSize   else 64
 
     // Body/armor layers use standard LPC rows; weapon may override its own row during attacks
-    val bodyRow    = if (isAttacking) (config.bodyAttackRow ?: SpriteFrames.SLASH_ROW) else SpriteFrames.WALK_ROW
-    val frameCount = if (isAttacking) config.attackFrames        else SpriteFrames.WALK_FRAMES
+    val bodyRow       = if (isAttacking) (config.bodyAttackRow ?: SpriteFrames.SLASH_ROW) else SpriteFrames.WALK_ROW
+    val bodyFrames    = if (isAttacking) (config.bodyAttackFrames ?: SpriteFrames.SLASH_FRAMES) else SpriteFrames.WALK_FRAMES
+    val frameCount    = if (isAttacking) config.attackFrames        else SpriteFrames.WALK_FRAMES
 
     // Emoji fallback if body sheet is missing
     if (!assetExists(context, bodyPath)) {
@@ -223,13 +224,15 @@ fun CharacterSprite(
         if (weaponBehindPath != null && assetExists(context, weaponBehindPath))
             SpriteLayer(assetPath = weaponBehindPath, frame = currentFrame, rowIndex = weaponRow, cellSize = weaponCellSize, modifier = Modifier.fillMaxSize())
 
+        val currentBodyFrame = minOf(currentFrame, bodyFrames - 1)
+
         if (!isBodyHidden) {
-            SpriteLayer(assetPath = bodyPath,  frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, pantsPath))  SpriteLayer(assetPath = pantsPath,  frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, feetPath))   SpriteLayer(assetPath = feetPath,   frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, armsPath))   SpriteLayer(assetPath = armsPath,   frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, headPath))   SpriteLayer(assetPath = headPath,   frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
-            if (assetExists(context, armorPath))  SpriteLayer(assetPath = armorPath,  frame = currentFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            SpriteLayer(assetPath = bodyPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            if (assetExists(context, pantsPath))  SpriteLayer(assetPath = pantsPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            if (assetExists(context, feetPath))   SpriteLayer(assetPath = feetPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            if (assetExists(context, armsPath))   SpriteLayer(assetPath = armsPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            if (assetExists(context, headPath))   SpriteLayer(assetPath = headPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+            if (assetExists(context, armorPath))  SpriteLayer(assetPath = armorPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
         }
 
         // Front weapon layer renders last (on top)

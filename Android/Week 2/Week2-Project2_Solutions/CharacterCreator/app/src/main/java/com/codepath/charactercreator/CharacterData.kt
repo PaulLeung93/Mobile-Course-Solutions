@@ -59,7 +59,7 @@ val statDescriptions = mapOf(
 val weaponsByClass = mapOf(
     "Warrior" to listOf("Longsword", "Battle Axe", "Light Saber", "Halberd"),
     "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Runic Dagger"),
-    "Rogue"   to listOf("Twin Daggers", "Smoke Bomb", "Garrote Wire", "Poison Vial"),
+    "Rogue"   to listOf("Dagger", "Smoke Bomb", "Whip", "Poison Vial"),
     "Ranger"  to listOf("Longbow", "Crossbow", "Throwing Axes", "Hunter's Trap"),
 )
 
@@ -68,8 +68,8 @@ val weaponEmojis = mapOf(
     "Light Saber"   to "🗡️", "Halberd"       to "🔱",
     "Arcane Staff"  to "🪄", "Spell Tome"    to "📖",
     "Crystal Orb"   to "🔮", "Runic Dagger"  to "✨",
-    "Twin Daggers"  to "🗡️", "Smoke Bomb"    to "💨",
-    "Garrote Wire"  to "🪢", "Poison Vial"   to "🧪",
+    "Dagger"        to "🗡️", "Smoke Bomb"    to "💨",
+    "Whip"          to "➰", "Poison Vial"   to "🧪",
     "Longbow"       to "🏹", "Crossbow"      to "🎯",
     "Throwing Axes" to "🪓", "Hunter's Trap" to "⛓️",
 )
@@ -125,7 +125,8 @@ data class WeaponConfig(
     val walkBehindPath: String?   = null,
     val attackBehindPath: String? = null,
     val attackCellSize: Int       = 64,
-    val bodyAttackRow: Int?       = null
+    val bodyAttackRow: Int?       = null,
+    val bodyAttackFrames: Int?    = null
 )
 
 private fun defaultWeaponPath(weapon: String) =
@@ -180,6 +181,23 @@ val weaponConfigs: Map<String, WeaponConfig> = mapOf(
         attackFrames     = 7,
         attackCellSize   = 192,
         bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+    ),
+    "Poison Vial" to WeaponConfig(
+        walkPath         = "sprites/weapons/poison_vial_sheet.png",
+        attackPath       = "sprites/weapons/poison_vial_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 7,
+        attackCellSize   = 192,
+        bodyAttackRow    = SpriteFrames.SPELLCAST_ROW
+    ),
+    "Whip" to WeaponConfig(
+        walkPath         = "sprites/weapons/whip_sheet.png",
+        attackPath       = "sprites/weapons/whip_attack_sheet.png",
+        attackRow        = 2,
+        attackFrames     = 8,
+        walkBehindPath   = "sprites/weapons/whip_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/whip_attack_behind_sheet.png",
+        attackCellSize   = 192
     ),
 )
 

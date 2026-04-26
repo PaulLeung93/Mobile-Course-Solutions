@@ -170,6 +170,11 @@ fun CharacterSprite(
     characterClass: String,
     weapon: String,
     ability: String? = null,
+    skinTone: String? = null,
+    eyeColor: String? = null,
+    hairStyle: String? = null,
+    hairColor: String? = null,
+    earType: String? = null,
     modifier: Modifier = Modifier,
     isAttacking: Boolean = false,
     isBodyHidden: Boolean = false,
@@ -178,8 +183,11 @@ fun CharacterSprite(
     val context = LocalContext.current
 
     val cls       = characterClass.lowercase()
-    val bodyPath  = "sprites/shared/body_sheet.png"
-    val headPath  = "sprites/shared/head_sheet.png"
+    val bodyPath  = if (skinTone != null) bodyAssetPath(skinTone) else "sprites/shared/body_sheet.png"
+    val headPath  = if (skinTone != null) headAssetPath(skinTone) else "sprites/shared/head_sheet.png"
+    val earsPath  = if (skinTone != null && earType != null) earsAssetPath(earType, skinTone) else null
+    val eyesPath  = if (eyeColor != null) eyesAssetPath(eyeColor) else null
+    val hairPath  = if (hairStyle != null && hairColor != null) hairAssetPath(hairStyle, hairColor) else null
     val pantsPath = "sprites/$cls/pants_sheet.png"
     val feetPath  = "sprites/$cls/feet_sheet.png"
     val armsPath  = "sprites/$cls/arms_sheet.png"
@@ -251,10 +259,13 @@ fun CharacterSprite(
             listOf(-44f to 0.20f, -22f to 0.36f).forEach { (xOff, alphaVal) ->
                 Box(modifier = Modifier.fillMaxSize().offset(x = xOff.dp).alpha(alphaVal)) {
                     SpriteLayer(assetPath = bodyPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (earsPath != null && assetExists(context, earsPath)) SpriteLayer(assetPath = earsPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                     if (assetExists(context, pantsPath)) SpriteLayer(assetPath = pantsPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                     if (assetExists(context, feetPath))  SpriteLayer(assetPath = feetPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                     if (assetExists(context, armsPath))  SpriteLayer(assetPath = armsPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                     if (assetExists(context, headPath))  SpriteLayer(assetPath = headPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (eyesPath != null && assetExists(context, eyesPath)) SpriteLayer(assetPath = eyesPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                    if (hairPath != null && assetExists(context, hairPath)) SpriteLayer(assetPath = hairPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                     if (assetExists(context, armorPath)) SpriteLayer(assetPath = armorPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                 }
             }
@@ -269,10 +280,16 @@ fun CharacterSprite(
 
             if (!isBodyHidden) {
                 SpriteLayer(assetPath = bodyPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (earsPath != null && assetExists(context, earsPath))
+                    SpriteLayer(assetPath = earsPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                 if (assetExists(context, pantsPath))  SpriteLayer(assetPath = pantsPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                 if (assetExists(context, feetPath))   SpriteLayer(assetPath = feetPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                 if (assetExists(context, armsPath))   SpriteLayer(assetPath = armsPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                 if (assetExists(context, headPath))   SpriteLayer(assetPath = headPath,   frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (eyesPath != null && assetExists(context, eyesPath))
+                    SpriteLayer(assetPath = eyesPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
+                if (hairPath != null && assetExists(context, hairPath))
+                    SpriteLayer(assetPath = hairPath, frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
                 if (assetExists(context, armorPath))  SpriteLayer(assetPath = armorPath,  frame = currentBodyFrame, rowIndex = bodyRow, modifier = Modifier.fillMaxSize())
             }
 

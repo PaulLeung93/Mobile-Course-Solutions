@@ -17,67 +17,104 @@ class MainActivity : ComponentActivity() {
 
                 composable("home") {
                     HomeScreen(
-                        onBeginClicked = { navController.navigate("class") }
+                        onBeginClicked = { navController.navigate("face") }
                     )
                 }
 
-                composable("class") {
-                    ClassScreen(
-                        onClassSelected = { characterClass ->
-                            navController.navigate("weapon/$characterClass")
+                composable("face") {
+                    FaceScreen(
+                        onFaceSelected = { face ->
+                            navController.navigate(
+                                "class/${face.skinTone}/${face.eyeColor}/${face.hairStyle}/${face.hairColor}/${face.earType}"
+                            )
                         }
                     )
                 }
 
-                composable("weapon/{characterClass}") { backStackEntry ->
-                    val characterClass = backStackEntry.arguments?.getString("characterClass") ?: ""
+                composable("class/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                    val skin      = back.arguments?.getString("skin")      ?: ""
+                    val eye       = back.arguments?.getString("eye")       ?: ""
+                    val hairStyle = back.arguments?.getString("hairStyle") ?: ""
+                    val hairColor = back.arguments?.getString("hairColor") ?: ""
+                    val ear       = back.arguments?.getString("ear")       ?: ""
+                    ClassScreen(
+                        onClassSelected = { characterClass ->
+                            navController.navigate("weapon/$characterClass/$skin/$eye/$hairStyle/$hairColor/$ear")
+                        }
+                    )
+                }
+
+                composable("weapon/{characterClass}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                    val characterClass = back.arguments?.getString("characterClass") ?: ""
+                    val skin           = back.arguments?.getString("skin")           ?: ""
+                    val eye            = back.arguments?.getString("eye")            ?: ""
+                    val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
+                    val hairColor      = back.arguments?.getString("hairColor")      ?: ""
+                    val ear            = back.arguments?.getString("ear")            ?: ""
                     WeaponScreen(
                         characterClass = characterClass,
                         onWeaponSelected = { weapon ->
-                            navController.navigate("stat/$characterClass/$weapon")
+                            navController.navigate("stat/$characterClass/$weapon/$skin/$eye/$hairStyle/$hairColor/$ear")
                         }
                     )
                 }
 
-                composable("stat/{characterClass}/{weapon}") { backStackEntry ->
-                    val characterClass = backStackEntry.arguments?.getString("characterClass") ?: ""
-                    val weapon          = backStackEntry.arguments?.getString("weapon") ?: ""
+                composable("stat/{characterClass}/{weapon}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                    val characterClass = back.arguments?.getString("characterClass") ?: ""
+                    val weapon         = back.arguments?.getString("weapon")         ?: ""
+                    val skin           = back.arguments?.getString("skin")           ?: ""
+                    val eye            = back.arguments?.getString("eye")            ?: ""
+                    val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
+                    val hairColor      = back.arguments?.getString("hairColor")      ?: ""
+                    val ear            = back.arguments?.getString("ear")            ?: ""
                     StatScreen(
                         characterClass = characterClass,
                         weapon = weapon,
-                        // STARTER BUG 2 GOES HERE:
-                        // Change navigate("ability/$characterClass/$stat/$weapon")
-                        //      to navigate("ability/$characterClass/$weapon/$stat")  ← stat and weapon swapped
                         onStatSelected = { stat ->
-                            navController.navigate("ability/$characterClass/$stat/$weapon")
+                            navController.navigate("ability/$characterClass/$stat/$weapon/$skin/$eye/$hairStyle/$hairColor/$ear")
                         }
                     )
                 }
 
-                composable("ability/{characterClass}/{stat}/{weapon}") { backStackEntry ->
-                    val characterClass = backStackEntry.arguments?.getString("characterClass") ?: ""
-                    val stat           = backStackEntry.arguments?.getString("stat")           ?: ""
-                    val weapon         = backStackEntry.arguments?.getString("weapon")         ?: ""
+                composable("ability/{characterClass}/{stat}/{weapon}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                    val characterClass = back.arguments?.getString("characterClass") ?: ""
+                    val stat           = back.arguments?.getString("stat")           ?: ""
+                    val weapon         = back.arguments?.getString("weapon")         ?: ""
+                    val skin           = back.arguments?.getString("skin")           ?: ""
+                    val eye            = back.arguments?.getString("eye")            ?: ""
+                    val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
+                    val hairColor      = back.arguments?.getString("hairColor")      ?: ""
+                    val ear            = back.arguments?.getString("ear")            ?: ""
                     AbilityScreen(
                         characterClass = characterClass,
                         stat = stat,
                         weapon = weapon,
                         onAbilitySelected = { ability ->
-                            navController.navigate("card/$characterClass/$stat/$weapon/$ability")
+                            navController.navigate("card/$characterClass/$stat/$weapon/$ability/$skin/$eye/$hairStyle/$hairColor/$ear")
                         }
                     )
                 }
 
-                composable("card/{characterClass}/{stat}/{weapon}/{ability}") { backStackEntry ->
-                    val characterClass = backStackEntry.arguments?.getString("characterClass") ?: ""
-                    val stat           = backStackEntry.arguments?.getString("stat")           ?: ""
-                    val weapon         = backStackEntry.arguments?.getString("weapon")         ?: ""
-                    val ability        = backStackEntry.arguments?.getString("ability")        ?: ""
+                composable("card/{characterClass}/{stat}/{weapon}/{ability}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                    val characterClass = back.arguments?.getString("characterClass") ?: ""
+                    val stat           = back.arguments?.getString("stat")           ?: ""
+                    val weapon         = back.arguments?.getString("weapon")         ?: ""
+                    val ability        = back.arguments?.getString("ability")        ?: ""
+                    val skin           = back.arguments?.getString("skin")           ?: ""
+                    val eye            = back.arguments?.getString("eye")            ?: ""
+                    val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
+                    val hairColor      = back.arguments?.getString("hairColor")      ?: ""
+                    val ear            = back.arguments?.getString("ear")            ?: ""
                     CharacterCardScreen(
                         characterClass = characterClass,
                         stat = stat,
                         weapon = weapon,
                         ability = ability,
+                        skinTone = skin,
+                        eyeColor = eye,
+                        hairStyle = hairStyle,
+                        hairColor = hairColor,
+                        earType = ear,
                         onStartOver = {
                             navController.popBackStack("home", inclusive = false)
                         }

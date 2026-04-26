@@ -94,6 +94,82 @@ val abilityEmojis = mapOf(
     "Track Prey"     to "🐾", "Nature's Call"  to "🌿",
 )
 
+// ── Face customization data ───────────────────────────────────────────────────
+
+data class SkinTone(val key: String, val label: String, val previewColor: Color)
+
+val skinTones = listOf(
+    SkinTone("light",  "Light",  Color(0xFFF5D0A9)),
+    SkinTone("amber",  "Amber",  Color(0xFFD4A574)),
+    SkinTone("bronze", "Bronze", Color(0xFFC18040)),
+    SkinTone("brown",  "Brown",  Color(0xFF8B5E3C)),
+    SkinTone("olive",  "Olive",  Color(0xFF9C8455)),
+    SkinTone("taupe",  "Taupe",  Color(0xFF8B7355)),
+)
+
+data class EyeOption(val key: String, val label: String, val previewColor: Color)
+
+val eyeOptions = listOf(
+    EyeOption("blue",   "Blue",   Color(0xFF4A90D9)),
+    EyeOption("brown",  "Brown",  Color(0xFF8B5E3C)),
+    EyeOption("gray",   "Gray",   Color(0xFF9B9B9B)),
+    EyeOption("green",  "Green",  Color(0xFF5B9E5B)),
+    EyeOption("orange", "Orange", Color(0xFFE67E22)),
+    EyeOption("purple", "Purple", Color(0xFF9B59B6)),
+    EyeOption("red",    "Red",    Color(0xFFE74C3C)),
+    EyeOption("yellow", "Yellow", Color(0xFFE8C840)),
+)
+
+data class HairStyle(val key: String, val label: String, val folder: String)
+
+val hairStyles = listOf(
+    HairStyle("bangs",          "Bangs",      "hair/bangs/male"),
+    HairStyle("bangsshort",     "Short Bangs","hair/bangsshort/male"),
+    HairStyle("bangslong",      "Long Bangs", "hair/bangslong/male"),
+    HairStyle("buzzcut",        "Buzzcut",    "hair/buzzcut/adult"),
+    HairStyle("bob",            "Bob",        "hair/bob/adult"),
+    HairStyle("bob_side_part",  "Side Part",  "hair/bob_side_part/adult"),
+    HairStyle("braid",          "Braid",      "hair/braid/male"),
+    HairStyle("braid2",         "Double Braid","hair/braid2/male"),
+    HairStyle("afro",           "Afro",       "hair/afro/male"),
+    HairStyle("curly_short",    "Curly Short","hair/curly_short/adult"),
+    HairStyle("curly_long",     "Curly Long", "hair/curly_long/male"),
+    HairStyle("bedhead",        "Bedhead",    "hair/bedhead/male"),
+    HairStyle("cowlick",        "Cowlick",    "hair/cowlick/adult"),
+    HairStyle("cornrows",       "Cornrows",   "hair/cornrows/adult"),
+    HairStyle("dreadlocks_short","Dreads Short","hair/dreadlocks_short/adult"),
+    HairStyle("dreadlocks_long", "Dreads Long", "hair/dreadlocks_long/male"),
+)
+
+data class HairColor(val key: String, val label: String, val previewColor: Color)
+
+val hairColors = listOf(
+    HairColor("black",      "Black",    Color(0xFF1A1A1A)),
+    HairColor("raven",      "Raven",    Color(0xFF2C2C3A)),
+    HairColor("dark_brown", "Dk Brown", Color(0xFF4A2E1A)),
+    HairColor("chestnut",   "Chestnut", Color(0xFF7B4513)),
+    HairColor("ginger",     "Ginger",   Color(0xFFB25219)),
+    HairColor("red",        "Red",      Color(0xFFCC3300)),
+    HairColor("blonde",     "Blonde",   Color(0xFFE8C84A)),
+    HairColor("ash",        "Ash",      Color(0xFFB0B0A8)),
+)
+
+data class EarOption(val key: String, val label: String, val emoji: String)
+
+val earOptions = listOf(
+    EarOption("elven",  "Human", "👂"),
+    EarOption("medium", "Elven", "🧝"),
+)
+
+// asset path helpers used by FaceScreen and CharacterSprite
+fun bodyAssetPath(skin: String)                 = "sprites/face/body_$skin.png"
+fun headAssetPath(skin: String)                 = "sprites/face/head_$skin.png"
+fun eyesAssetPath(color: String)                = "sprites/face/eyes_$color.png"
+fun hairAssetPath(style: String, color: String) = "sprites/face/hair_${style}_$color.png"
+fun earsAssetPath(type: String, skin: String)   = "sprites/face/ears_${type}_$skin.png"
+const val DEFAULT_SHIRT_PATH = "sprites/face/default_shirt.png"
+const val DEFAULT_PANTS_PATH = "sprites/face/default_pants.png"
+
 // ── Character card description ────────────────────────────────────────────────
 fun buildDescription(
     characterClass: String,

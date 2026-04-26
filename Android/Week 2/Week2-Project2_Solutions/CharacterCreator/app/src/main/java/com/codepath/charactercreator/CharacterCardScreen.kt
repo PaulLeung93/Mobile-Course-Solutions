@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -58,6 +62,11 @@ fun CharacterCardScreen(
     stat: String,
     weapon: String,
     ability: String,
+    skinTone: String? = null,
+    eyeColor: String? = null,
+    hairStyle: String? = null,
+    hairColor: String? = null,
+    earType: String? = null,
     onStartOver: () -> Unit
 ) {
     // SOLUTION: use the navigation arguments passed into this screen
@@ -88,9 +97,18 @@ fun CharacterCardScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 32.dp),
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
             // Header
             Text(
                 text = "YOUR CHARACTER",
@@ -115,9 +133,14 @@ fun CharacterCardScreen(
                     characterClass = characterClass,
                     weapon = weapon,
                     ability = activeAbility,
+                    skinTone = skinTone,
+                    eyeColor = eyeColor,
+                    hairStyle = hairStyle,
+                    hairColor = hairColor,
+                    earType = earType,
                     isAttacking = isAttacking,
                     isBodyHidden = isHidden,
-                    onAttackComplete = { 
+                    onAttackComplete = {
                         isAttacking = false
                     },
                     modifier = Modifier.size(160.dp)
@@ -197,14 +220,16 @@ fun CharacterCardScreen(
                 )
             }
 
-            Spacer(Modifier.weight(1f))
+            } // end scrollable inner column
 
-            // Action buttons
+            Spacer(Modifier.height(8.dp))
+
+            // Action buttons (pinned above nav bar)
             if (characterClass == "Mage") {
                 Button(
-                    onClick = { 
+                    onClick = {
                         activeAbility = ability
-                        isAttacking = true 
+                        isAttacking = true
                     },
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                     shape = RoundedCornerShape(8.dp),
@@ -264,6 +289,7 @@ fun CharacterCardScreen(
                 onClick = onStartOver,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = 16.dp)
                     .height(48.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(

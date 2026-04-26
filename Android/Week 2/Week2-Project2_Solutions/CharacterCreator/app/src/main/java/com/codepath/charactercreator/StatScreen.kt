@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -45,44 +49,54 @@ fun StatScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkBg)
-            .padding(horizontal = 20.dp, vertical = 32.dp),
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        StepHeader(step = 3, total = 4, label = "CHOOSE YOUR STAT BOOST")
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            StepHeader(step = 4, total = 5, label = "CHOOSE YOUR STAT BOOST")
 
-        Spacer(Modifier.height(12.dp))
-
-        // Context — shows the class and weapon chosen in previous steps
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ContextChip(label = characterClass, emoji = classEmojis[characterClass] ?: "")
-            ContextChip(label = weapon,         emoji = weaponEmojis[weapon] ?: "🗡️")
-        }
-
-        Spacer(Modifier.height(24.dp))
-
-        // 2×2 grid of stat selection cards
-        val rows = stats.chunked(2)
-        rows.forEach { rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                rowItems.forEach { stat ->
-                    SelectionCard(
-                        emoji = statEmojis[stat] ?: "",
-                        label = stat,
-                        description = statDescriptions[stat] ?: "",
-                        accentColor = accentColor,
-                        isSelected = selectedStat == stat,
-                        modifier = Modifier.weight(1f),
-                        onClick = { selectedStat = stat }
-                    )
-                }
-            }
             Spacer(Modifier.height(12.dp))
+
+            // Context — shows the class and weapon chosen in previous steps
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                ContextChip(label = characterClass, emoji = classEmojis[characterClass] ?: "")
+                ContextChip(label = weapon,         emoji = weaponEmojis[weapon] ?: "🗡️")
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            // 2×2 grid of stat selection cards
+            val rows = stats.chunked(2)
+            rows.forEach { rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    rowItems.forEach { stat ->
+                        SelectionCard(
+                            emoji = statEmojis[stat] ?: "",
+                            label = stat,
+                            description = statDescriptions[stat] ?: "",
+                            accentColor = accentColor,
+                            isSelected = selectedStat == stat,
+                            modifier = Modifier.weight(1f),
+                            onClick = { selectedStat = stat }
+                        )
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+            }
         }
 
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.height(8.dp))
 
         // STARTER TODO: fill in onStatSelected(selectedStat) inside the onClick below.
         // onStatSelected is the callback from MainActivity that navigates to
@@ -92,6 +106,7 @@ fun StatScreen(
             enabled = selectedStat.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(bottom = 16.dp)
                 .height(52.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(

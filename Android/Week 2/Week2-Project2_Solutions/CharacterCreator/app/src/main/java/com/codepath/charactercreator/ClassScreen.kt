@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -45,42 +49,53 @@ fun ClassScreen(onClassSelected: (String) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .background(DarkBg)
-            .padding(horizontal = 20.dp, vertical = 32.dp),
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        StepHeader(step = 1, total = 4, label = "CHOOSE YOUR CLASS")
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            StepHeader(step = 2, total = 5, label = "CHOOSE YOUR CLASS")
 
-        Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(24.dp))
 
-        // 2×2 grid of class selection cards
-        val rows = classes.chunked(2)
-        rows.forEach { rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                rowItems.forEach { characterClass ->
-                    SelectionCard(
-                        emoji = classEmojis[characterClass] ?: "",
-                        label = characterClass,
-                        description = classDescriptions[characterClass] ?: "",
-                        accentColor = classColors[characterClass] ?: PurpleAccent,
-                        isSelected = selectedClass == characterClass,
-                        modifier = Modifier.weight(1f),
-                        onClick = { selectedClass = characterClass }
-                    )
+            // 2×2 grid of class selection cards
+            val rows = classes.chunked(2)
+            rows.forEach { rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    rowItems.forEach { characterClass ->
+                        SelectionCard(
+                            emoji = classEmojis[characterClass] ?: "",
+                            label = characterClass,
+                            description = classDescriptions[characterClass] ?: "",
+                            accentColor = classColors[characterClass] ?: PurpleAccent,
+                            isSelected = selectedClass == characterClass,
+                            modifier = Modifier.weight(1f),
+                            onClick = { selectedClass = characterClass }
+                        )
+                    }
                 }
+                Spacer(Modifier.height(12.dp))
             }
-            Spacer(Modifier.height(12.dp))
         }
 
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.height(8.dp))
 
         Button(
             onClick = { onClassSelected(selectedClass) },
             enabled = selectedClass.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(bottom = 16.dp)
                 .height(52.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(

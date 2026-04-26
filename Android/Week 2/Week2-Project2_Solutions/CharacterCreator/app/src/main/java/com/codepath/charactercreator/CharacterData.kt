@@ -59,7 +59,7 @@ val statDescriptions = mapOf(
 val weaponsByClass = mapOf(
     "Warrior" to listOf("Longsword", "Battle Axe", "Light Saber", "Halberd"),
     "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Elder Wand"),
-    "Rogue"   to listOf("Dagger", "Shuriken", "Whip", "Scimitar"),
+    "Rogue"   to listOf("Dagger", "Shuriken", "Whip", "Scythe"),
     "Ranger"  to listOf("Longbow", "Crossbow", "Boomerang", "Slingshot"),
 )
 
@@ -69,7 +69,7 @@ val weaponEmojis = mapOf(
     "Arcane Staff"  to "🪄", "Spell Tome"    to "📖",
     "Crystal Orb"   to "🔮", "Elder Wand"    to "🪵",
     "Dagger"        to "🗡️", "Shuriken"      to "🌟",
-    "Whip"          to "➰", "Scimitar"      to "⚔️",
+    "Whip"          to "➰", "Scythe"        to "⚔️",
     "Longbow"       to "🏹", "Crossbow"      to "🎯",
     "Boomerang"     to "🪃", "Slingshot"     to "☄️",
 )
@@ -285,16 +285,14 @@ val weaponConfigs: Map<String, WeaponConfig> = mapOf(
         attackBehindPath = "sprites/weapons/halberd_attack_behind_sheet.png",
         attackCellSize   = 192,
     ),
-    "Scimitar" to WeaponConfig(
-        walkPath         = "sprites/weapons/scimitar_sheet.png",
-        walkBehindPath   = "sprites/weapons/scimitar_behind_sheet.png",
-        walkRow          = 2,   // compact sheet: rows 0-3 = walk up/left/down/right
-        walkCellSize     = 64,
-        attackPath       = "sprites/weapons/scimitar_attack_sheet.png",
-        attackBehindPath = "sprites/weapons/scimitar_attack_behind_sheet.png",
-        attackRow        = 6,   // compact sheet: rows 4-7 = slash up/left/down/right
+    "Scythe" to WeaponConfig(
+        walkPath         = "sprites/weapons/scythe_sheet.png",
+        attackPath       = "sprites/weapons/scythe_attack_sheet.png",
+        attackRow        = 2,
         attackFrames     = 6,
-        attackCellSize   = 64,
+        walkBehindPath   = "sprites/weapons/scythe_behind_sheet.png",
+        attackBehindPath = "sprites/weapons/scythe_attack_behind_sheet.png",
+        attackCellSize   = 192,
     ),
     "Shuriken" to WeaponConfig(
         walkPath         = "sprites/weapons/shuriken_sheet.png",

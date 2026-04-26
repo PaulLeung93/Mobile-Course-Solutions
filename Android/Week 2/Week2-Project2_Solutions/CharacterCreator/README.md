@@ -7,7 +7,7 @@ The application features an advanced rendering engine that composites multiple s
 ## App Walkthrough
 
 <div align="center">
-  <video src="walkthroughs/walkthrough.mp4" width="400" autoplay loop muted></video>
+  <img src="walkthroughs/walkthrough.gif" width="400" />
 </div>
 
 ## Core Features

@@ -59,7 +59,7 @@ val statDescriptions = mapOf(
 val weaponsByClass = mapOf(
     "Warrior" to listOf("Longsword", "Battle Axe", "Light Saber", "Halberd"),
     "Mage"    to listOf("Arcane Staff", "Spell Tome", "Crystal Orb", "Elder Wand"),
-    "Rogue"   to listOf("Dagger", "Shuriken", "Whip", "Sickle"),
+    "Rogue"   to listOf("Dagger", "Shuriken", "Whip", "Scimitar"),
     "Ranger"  to listOf("Longbow", "Crossbow", "Boomerang", "Slingshot"),
 )
 
@@ -69,7 +69,7 @@ val weaponEmojis = mapOf(
     "Arcane Staff"  to "🪄", "Spell Tome"    to "📖",
     "Crystal Orb"   to "🔮", "Elder Wand"    to "🪵",
     "Dagger"        to "🗡️", "Shuriken"      to "🌟",
-    "Whip"          to "➰", "Sickle"        to "🌙",
+    "Whip"          to "➰", "Scimitar"      to "⚔️",
     "Longbow"       to "🏹", "Crossbow"      to "🎯",
     "Boomerang"     to "🪃", "Slingshot"     to "☄️",
 )
@@ -202,7 +202,10 @@ data class WeaponConfig(
     val attackBehindPath: String? = null,
     val attackCellSize: Int       = 64,
     val bodyAttackRow: Int?       = null,
-    val bodyAttackFrames: Int?    = null
+    val bodyAttackFrames: Int?    = null,
+    // Override the weapon's walk row/cell-size for non-standard compact sheets
+    val walkRow: Int?             = null,
+    val walkCellSize: Int         = 64,
 )
 
 private fun defaultWeaponPath(weapon: String) =
@@ -281,6 +284,17 @@ val weaponConfigs: Map<String, WeaponConfig> = mapOf(
         walkBehindPath   = "sprites/weapons/halberd_behind_sheet.png",
         attackBehindPath = "sprites/weapons/halberd_attack_behind_sheet.png",
         attackCellSize   = 192,
+    ),
+    "Scimitar" to WeaponConfig(
+        walkPath         = "sprites/weapons/scimitar_sheet.png",
+        walkBehindPath   = "sprites/weapons/scimitar_behind_sheet.png",
+        walkRow          = 2,   // compact sheet: rows 0-3 = walk up/left/down/right
+        walkCellSize     = 64,
+        attackPath       = "sprites/weapons/scimitar_attack_sheet.png",
+        attackBehindPath = "sprites/weapons/scimitar_attack_behind_sheet.png",
+        attackRow        = 6,   // compact sheet: rows 4-7 = slash up/left/down/right
+        attackFrames     = 6,
+        attackCellSize   = 64,
     ),
     "Shuriken" to WeaponConfig(
         walkPath         = "sprites/weapons/shuriken_sheet.png",

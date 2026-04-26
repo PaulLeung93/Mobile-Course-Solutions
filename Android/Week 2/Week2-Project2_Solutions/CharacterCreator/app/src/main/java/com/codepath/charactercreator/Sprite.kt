@@ -203,8 +203,8 @@ fun CharacterSprite(
 
     val weaponFrontPath = if (isWeaponAttack) config.attackPath       else config.walkPath
     val weaponBehindPath= if (isWeaponAttack) config.attackBehindPath else config.walkBehindPath
-    val weaponRow       = if (isWeaponAttack) config.attackRow        else if (isCasting) SpriteFrames.SPELLCAST_ROW else SpriteFrames.WALK_ROW
-    val weaponCellSize  = if (isWeaponAttack) config.attackCellSize   else 64
+    val weaponRow       = if (isWeaponAttack) config.attackRow        else if (isCasting) SpriteFrames.SPELLCAST_ROW else (config.walkRow ?: SpriteFrames.WALK_ROW)
+    val weaponCellSize  = if (isWeaponAttack) config.attackCellSize   else config.walkCellSize
 
     // Body/armor layers use standard LPC rows; weapon may override its own row during attacks
     val bodyRow       = if (isWeaponAttack) (config.bodyAttackRow ?: SpriteFrames.SLASH_ROW) else if (isCasting) SpriteFrames.SPELLCAST_ROW else SpriteFrames.WALK_ROW

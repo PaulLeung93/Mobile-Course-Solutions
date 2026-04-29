@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 data class FaceSelection(
+    val name: String,
     val skinTone: String,
     val eyeColor: String,
     val hairStyle: String,
@@ -54,6 +56,7 @@ fun FaceScreen(onFaceSelected: (FaceSelection) -> Unit) {
     var selectedHairStyle by remember { mutableStateOf(hairStyles[0].key) }
     var selectedHairColor by remember { mutableStateOf(hairColors[0].key) }
     var selectedEar       by remember { mutableStateOf(earOptions[0].key) }
+    var name              by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -74,6 +77,16 @@ fun FaceScreen(onFaceSelected: (FaceSelection) -> Unit) {
             StepHeader(step = 1, total = 5, label = "DESIGN YOUR CHARACTER")
 
             Spacer(Modifier.height(24.dp))
+
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Character Name") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(16.dp))
 
             // Live face preview
             FacePreview(
@@ -154,6 +167,7 @@ fun FaceScreen(onFaceSelected: (FaceSelection) -> Unit) {
             onClick = {
                 onFaceSelected(
                     FaceSelection(
+                        name      = name,
                         skinTone  = selectedSkin,
                         eyeColor  = selectedEye,
                         hairStyle = selectedHairStyle,

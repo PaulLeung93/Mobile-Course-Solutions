@@ -32,9 +32,8 @@ import androidx.compose.ui.unit.sp
 // The UI in this screen is fully built — the selection cards and confirm button
 // are complete and functional.
 //
-// STARTER TODO: The confirm button's onClick is stubbed out. Students must fill
-// in the navController.navigate() call that passes characterClass and selectedStat
-// to the weapon screen. The comment marks exactly where the call goes.
+// STARTER TODO: The Confirm button's onClick is stubbed out. Students look at
+// ClassScreen for the pattern and call onStatSelected(selectedStat) inside onClick.
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
 fun StatScreen(
@@ -99,8 +98,7 @@ fun StatScreen(
         Spacer(Modifier.height(8.dp))
 
         // STARTER TODO: fill in onStatSelected(selectedStat) inside the onClick below.
-        // onStatSelected is the callback from MainActivity that navigates to
-        // "weapon/$characterClass/$selectedStat" — students must call it here.
+        // Look at ClassScreen's Confirm button for the pattern.
         Button(
             onClick = { onStatSelected(selectedStat) },
             enabled = selectedStat.isNotEmpty(),

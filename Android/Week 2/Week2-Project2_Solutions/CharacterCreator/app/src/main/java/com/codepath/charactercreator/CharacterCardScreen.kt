@@ -44,16 +44,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 // ── STARTER CODE NOTES ────────────────────────────────────────────────────────
-// The layout and styling of this screen are fully built. The four text fields
-// currently display placeholder strings ("???").
+// The layout and styling of this screen are fully built. The display variables
+// currently hold placeholder strings ("???").
 //
-// STARTER TODO 1: Replace the placeholder for classDisplay with characterClass
-// STARTER TODO 2: Replace the placeholder for statDisplay  with stat
-// STARTER TODO 3: Replace the placeholder for weaponDisplay with weapon
+// STARTER TODO 1: Replace the placeholder for classDisplay   with characterClass
+// STARTER TODO 2: Replace the placeholder for statDisplay    with stat
+// STARTER TODO 3: Replace the placeholder for weaponDisplay  with weapon
 // STARTER TODO 4: Replace the placeholder for abilityDisplay with ability
-// STARTER TODO 5: Replace the placeholder description with buildDescription(...)
+// STARTER TODO 5: Replace the placeholder for nameDisplay    with name
+// STARTER TODO 6: Replace the placeholder description with buildDescription(...)
 //
-// All five values arrive as parameters at the top of this function — students
+// All six values arrive as parameters at the top of this function — students
 // just need to wire them into the display variables below.
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
@@ -62,6 +63,7 @@ fun CharacterCardScreen(
     stat: String,
     weapon: String,
     ability: String,
+    name: String = "",
     skinTone: String? = null,
     eyeColor: String? = null,
     hairStyle: String? = null,
@@ -75,6 +77,7 @@ fun CharacterCardScreen(
     val statDisplay    = stat
     val weaponDisplay  = weapon
     val abilityDisplay = ability
+    val nameDisplay    = name
     val description    = buildDescription(characterClass, stat, weapon, ability)
 
     val accentColor = classColors[characterClass] ?: PurpleAccent
@@ -116,6 +119,13 @@ fun CharacterCardScreen(
                 color = GoldAccent,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 3.sp
+            )
+            Text(
+                text = nameDisplay,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = TextPrimary,
+                letterSpacing = 1.sp
             )
 
             Spacer(Modifier.height(20.dp))

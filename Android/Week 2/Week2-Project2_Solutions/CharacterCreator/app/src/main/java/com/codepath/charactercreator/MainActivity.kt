@@ -25,13 +25,14 @@ class MainActivity : ComponentActivity() {
                     FaceScreen(
                         onFaceSelected = { face ->
                             navController.navigate(
-                                "class/${face.skinTone}/${face.eyeColor}/${face.hairStyle}/${face.hairColor}/${face.earType}"
+                                "class/${face.name}/${face.skinTone}/${face.eyeColor}/${face.hairStyle}/${face.hairColor}/${face.earType}"
                             )
                         }
                     )
                 }
 
-                composable("class/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                composable("class/{name}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                    val name      = back.arguments?.getString("name")      ?: ""
                     val skin      = back.arguments?.getString("skin")      ?: ""
                     val eye       = back.arguments?.getString("eye")       ?: ""
                     val hairStyle = back.arguments?.getString("hairStyle") ?: ""
@@ -39,13 +40,14 @@ class MainActivity : ComponentActivity() {
                     val ear       = back.arguments?.getString("ear")       ?: ""
                     ClassScreen(
                         onClassSelected = { characterClass ->
-                            navController.navigate("weapon/$characterClass/$skin/$eye/$hairStyle/$hairColor/$ear")
+                            navController.navigate("weapon/$characterClass/$name/$skin/$eye/$hairStyle/$hairColor/$ear")
                         }
                     )
                 }
 
-                composable("weapon/{characterClass}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                composable("weapon/{characterClass}/{name}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
                     val characterClass = back.arguments?.getString("characterClass") ?: ""
+                    val name           = back.arguments?.getString("name")           ?: ""
                     val skin           = back.arguments?.getString("skin")           ?: ""
                     val eye            = back.arguments?.getString("eye")            ?: ""
                     val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
@@ -54,14 +56,15 @@ class MainActivity : ComponentActivity() {
                     WeaponScreen(
                         characterClass = characterClass,
                         onWeaponSelected = { weapon ->
-                            navController.navigate("stat/$characterClass/$weapon/$skin/$eye/$hairStyle/$hairColor/$ear")
+                            navController.navigate("stat/$characterClass/$weapon/$name/$skin/$eye/$hairStyle/$hairColor/$ear")
                         }
                     )
                 }
 
-                composable("stat/{characterClass}/{weapon}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                composable("stat/{characterClass}/{weapon}/{name}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
                     val characterClass = back.arguments?.getString("characterClass") ?: ""
                     val weapon         = back.arguments?.getString("weapon")         ?: ""
+                    val name           = back.arguments?.getString("name")           ?: ""
                     val skin           = back.arguments?.getString("skin")           ?: ""
                     val eye            = back.arguments?.getString("eye")            ?: ""
                     val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
@@ -71,15 +74,16 @@ class MainActivity : ComponentActivity() {
                         characterClass = characterClass,
                         weapon = weapon,
                         onStatSelected = { stat ->
-                            navController.navigate("ability/$characterClass/$stat/$weapon/$skin/$eye/$hairStyle/$hairColor/$ear")
+                            navController.navigate("ability/$characterClass/$stat/$weapon/$name/$skin/$eye/$hairStyle/$hairColor/$ear")
                         }
                     )
                 }
 
-                composable("ability/{characterClass}/{stat}/{weapon}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                composable("ability/{characterClass}/{stat}/{weapon}/{name}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
                     val characterClass = back.arguments?.getString("characterClass") ?: ""
                     val stat           = back.arguments?.getString("stat")           ?: ""
                     val weapon         = back.arguments?.getString("weapon")         ?: ""
+                    val name           = back.arguments?.getString("name")           ?: ""
                     val skin           = back.arguments?.getString("skin")           ?: ""
                     val eye            = back.arguments?.getString("eye")            ?: ""
                     val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
@@ -90,16 +94,17 @@ class MainActivity : ComponentActivity() {
                         stat = stat,
                         weapon = weapon,
                         onAbilitySelected = { ability ->
-                            navController.navigate("card/$characterClass/$stat/$weapon/$ability/$skin/$eye/$hairStyle/$hairColor/$ear")
+                            navController.navigate("card/$characterClass/$stat/$weapon/$ability/$name/$skin/$eye/$hairStyle/$hairColor/$ear")
                         }
                     )
                 }
 
-                composable("card/{characterClass}/{stat}/{weapon}/{ability}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
+                composable("card/{characterClass}/{stat}/{weapon}/{ability}/{name}/{skin}/{eye}/{hairStyle}/{hairColor}/{ear}") { back ->
                     val characterClass = back.arguments?.getString("characterClass") ?: ""
                     val stat           = back.arguments?.getString("stat")           ?: ""
                     val weapon         = back.arguments?.getString("weapon")         ?: ""
                     val ability        = back.arguments?.getString("ability")        ?: ""
+                    val name           = back.arguments?.getString("name")           ?: ""
                     val skin           = back.arguments?.getString("skin")           ?: ""
                     val eye            = back.arguments?.getString("eye")            ?: ""
                     val hairStyle      = back.arguments?.getString("hairStyle")      ?: ""
@@ -110,6 +115,7 @@ class MainActivity : ComponentActivity() {
                         stat = stat,
                         weapon = weapon,
                         ability = ability,
+                        name = name,
                         skinTone = skin,
                         eyeColor = eye,
                         hairStyle = hairStyle,

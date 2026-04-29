@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -83,7 +84,16 @@ fun FaceScreen(onFaceSelected: (FaceSelection) -> Unit) {
                 onValueChange = { name = it },
                 label = { Text("Character Name") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary,
+                    focusedLabelColor = TextMuted,
+                    unfocusedLabelColor = TextMuted,
+                    focusedBorderColor = PurpleAccent,
+                    unfocusedBorderColor = TextMuted,
+                    cursorColor = TextPrimary,
+                )
             )
 
             Spacer(Modifier.height(16.dp))

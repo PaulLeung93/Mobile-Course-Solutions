@@ -87,7 +87,16 @@ fun FaceScreen(onFaceSelected: (FaceSelection) -> Unit) {
             //     onValueChange = { ??? },
             //     label = { Text("Character Name") },
             //     singleLine = true,
-            //     modifier = Modifier.fillMaxWidth()
+            //     modifier = Modifier.fillMaxWidth(),
+            //     colors = OutlinedTextFieldDefaults.colors(
+            //         focusedTextColor = TextPrimary,
+            //         unfocusedTextColor = TextPrimary,
+            //         focusedLabelColor = TextMuted,
+            //         unfocusedLabelColor = TextMuted,
+            //         focusedBorderColor = PurpleAccent,
+            //         unfocusedBorderColor = TextMuted,
+            //         cursorColor = TextPrimary,
+            //     )
             // )
 
             Spacer(Modifier.height(16.dp))

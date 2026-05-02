@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.TriviaLive" parent="android:Theme.Material.NoTitleBar" />
+</resources>
